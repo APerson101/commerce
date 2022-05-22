@@ -1,0 +1,30 @@
+type Businesses @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  type: String
+  location: String
+  about: String
+  cac: String
+}
+
+type Reviews @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  userID: ID
+  businessID: ID
+  comment: String
+  stars: Int
+}
+
+type Users @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  photo: String
+  bank: String
+  isBusiness: Boolean
+}
+
+type Bookings @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  user: ID
+  business: ID
+  dateTime: AWSDateTime
+}

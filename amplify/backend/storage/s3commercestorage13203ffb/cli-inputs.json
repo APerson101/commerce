@@ -1,0 +1,12 @@
+{
+  "resourceName": "s3commercestorage13203ffb",
+  "bucketName": "commerce-storage-13203ffb",
+  "policyUUID": "57edc032",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "version": "1",
+  "cognitoConfig": {
+    "identityPoolName": "commerce1b5f9dc6_identitypool_1b5f9dc6",
+    "allowUnauthenticatedIdentities": false,
+    "resourceNameTruncated": "commer1b5f9dc6",
+    "userPoolName": "commerce1b5f9dc6_userpool_1b5f9dc6",
+    "autoVerifiedAttributes": [
+      "email"
+    ],
+    "mfaConfiguration": "OFF",
+    "mfaTypes": [
+      "SMS Text Message"
+    ],
+    "smsAuthenticationMessage": "Your authentication code is {####}",
+    "smsVerificationMessage": "Your verification code is {####}",
+    "emailVerificationSubject": "Your verification code",
+    "emailVerificationMessage": "Your verification code is {####}",
+    "defaultPasswordPolicy": false,
+    "passwordPolicyMinLength": 8,
+    "passwordPolicyCharacters": [],
+    "requiredAttributes": [
+      "email"
+    ],
+    "aliasAttributes": [],
+    "userpoolClientGenerateSecret": false,
+    "userpoolClientRefreshTokenValidity": 30,
+    "userpoolClientWriteAttributes": [
+      "email"
+    ],
+    "userpoolClientReadAttributes": [
+      "email"
+    ],
+    "userpoolClientLambdaRole": "commer1b5f9dc6_userpoolclient_lambda_role",
+    "userpoolClientSetAttributes": false,
+    "sharedId": "1b5f9dc6",
+    "resourceName": "commerce1b5f9dc6",
+    "authSelections": "identityPoolAndUserPool",
+    "useDefault": "defaultSocial",
+    "hostedUI": true,
+    "usernameAttributes": [
+      "email"
+    ],
+    "hostedUIDomainName": "commerce1b5f9dc6-1b5f9dc6",
+    "authProvidersUserPool": [
+      "Google"
+    ],
+    "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"ecommerce://\"],\"LogoutURLs\":[\"ecommerce://\"]}",
+    "userPoolGroupList": [],
+    "serviceName": "Cognito",
+    "usernameCaseSensitive": false,
+    "useEnabledMfas": true
+  }
+}
