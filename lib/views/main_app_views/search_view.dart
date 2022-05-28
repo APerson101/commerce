@@ -13,7 +13,16 @@ class SearchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(children: [header(context), searchResults(context)]);
+    return ListView(children: [
+      header(context),
+      ObxValue((RxList<Businesses> values) {
+        if (values.isNotEmpty) {
+          return searchResults(context);
+        } else {
+          return Container();
+        }
+      }, controller.searchResult)
+    ]);
   }
 
   Widget header(BuildContext context) {
@@ -26,13 +35,16 @@ class SearchView extends StatelessWidget {
           title: SizedBox(
             width: MediaQuery.of(context).size.width * 0.6,
             child: TextField(
+              onChanged: (search) => controller.searchPhrase.value = search,
               decoration: InputDecoration(
                 hintText: "What are you looking for",
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 suffixIcon: IconButton(
                   icon: Icon(Icons.search),
-                  onPressed: () {},
+                  onPressed: () async {
+                    await controller.search();
+                  },
                 ),
               ),
             ),
@@ -80,9 +92,9 @@ class SearchView extends StatelessWidget {
                     OutlinedButton(onPressed: () {}, child: Text('Hair salon')),
                     OutlinedButton(onPressed: () {}, child: Text('Nail Salon')),
                     OutlinedButton(
-                        onPressed: () {}, child: Text('driving school')),
+                        onPressed: () {}, child: const Text('driving school')),
                     OutlinedButton(
-                        onPressed: () {}, child: Text('cooking school')),
+                        onPressed: () {}, child: const Text('cooking school')),
                   ],
                 )),
           ),
@@ -99,7 +111,7 @@ class SearchView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [const Text("Search for anything")],
+              children: const [Text("Search for anything")],
             ),
           );
 
@@ -110,20 +122,20 @@ class SearchView extends StatelessWidget {
         case currentSearchState.error:
           return const Center(child: Text("Unknown Error"));
         case currentSearchState.done:
-          return displaySearchResults();
+          return displaySearchResults(context);
         default:
           return Container();
       }
     }, controller.currentState);
   }
 
-  Widget displaySearchResults() {
-    List<Businesses> businesses = [];
+  Widget displaySearchResults(context) {
+    List<Businesses> businesses = controller.searchResult;
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: businessesChildren(businesses),
+        children: businessesChildren(businesses, context),
       ),
     );
   }
@@ -140,8 +152,8 @@ class SearchView extends StatelessWidget {
           },
           child: ListTile(
             title: Text(business.location!),
-            subtitle: Text(business.reviewsTotal!),
-            leading: Text(business.starsAverage!),
+            subtitle: Text(business.about!),
+            // leading: Text(business.),
           ),
         ),
       );

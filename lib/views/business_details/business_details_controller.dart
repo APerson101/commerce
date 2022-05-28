@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,11 +24,20 @@ class BusinessDetailsController extends GetxController {
       Reviews.classType,
       where: Reviews.BUSINESSID.eq(businessID),
     );
+
+    var imagesList = await FirebaseStorage.instance
+        .ref('Businesses/category/$businessID')
+        .listAll();
+    List<Image> allImage = [];
+    imagesList.items.forEach((element) async {
+      Uint8List? data = await element.getData();
+      allImage.add(Image.memory(data!));
+    });
     BusinessDetailsModel dets = BusinessDetailsModel(
-      name: username,
-      business: businessModel,
-      allReviews: reviewResults,
-    );
+        name: username,
+        business: businessModel,
+        allReviews: reviewResults,
+        images: allImage);
     return dets;
   }
 

@@ -2,6 +2,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,7 +13,12 @@ import 'views/home.dart';
 import 'views/signinview.dart';
 import 'views/signup.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+      // options: DefaultFirebaseOptions.currentPlatform,
+      );
+
   runApp(AppDecider());
 }
 
@@ -77,7 +83,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MainLoader extends StatelessWidget {
-  MainLoader({Key? key}) : super(key: key);
+  MainLoader({Key? key}) : super(key: key) {}
 //  light theme
   final ThemeData customLightTheme = ThemeData(
     // app's colors scheme and brightness

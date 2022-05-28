@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:get/get.dart';
 
 class SignUpController extends GetxController {
   RxString selectedCountry = ''.obs;
+  RxString location = ''.obs;
 
   RxString countryTextToDisplay = 'select country'.obs;
 
@@ -15,6 +18,9 @@ class SignUpController extends GetxController {
   RxString name = "Full Name".obs;
 
   RxBool asServiceProvider = false.obs;
+  RxBool showHrs = false.obs;
+  RxList<File> selectedImageFiles = <File>[].obs;
+
   Rx<signUpStates> currentState = signUpStates.idle.obs;
 
   RxString phoneText = "NG".obs;

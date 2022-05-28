@@ -33,14 +33,15 @@ class BusinessDetailsView extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
           children: details.images
-              .map((image) => Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Card(
+              .map(
+                (image) => Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Card(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
-                      child: Image(image: ''),
-                    ),
-                  ))
+                      child: image),
+                ),
+              )
               .toList()),
     );
 
