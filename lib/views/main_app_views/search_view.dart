@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:commerce/models/ModelProvider.dart';
 import 'package:commerce/views/main_controllers/search_controller.dart';
 import 'package:flutter/material.dart';
@@ -15,13 +13,24 @@ class SearchView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(children: [
       header(context),
-      ObxValue((RxList<Businesses> values) {
-        if (values.isNotEmpty) {
-          return searchResults(context);
-        } else {
-          return Container();
+      ObxValue((Rx<currentSearchState> state) {
+        // RxList<Businesses>
+        switch (state.value) {
+          case currentSearchState.searching:
+            return const Scaffold(
+                body: Center(child: CircularProgressIndicator.adaptive()));
+          case currentSearchState.done:
+            var values = controller.searchResult;
+            if (values.isNotEmpty) {
+              return searchResults(context);
+            } else {
+              return const Scaffold(
+                  body: Center(child: Text("No search Result")));
+            }
+          default:
+            return const Scaffold(body: Center(child: Text("Unknown Error")));
         }
-      }, controller.searchResult)
+      }, controller.currentState)
     ]);
   }
 
@@ -41,7 +50,7 @@ class SearchView extends StatelessWidget {
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
+                  icon: const Icon(Icons.search),
                   onPressed: () async {
                     await controller.search();
                   },

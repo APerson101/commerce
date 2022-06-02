@@ -37,7 +37,7 @@ dependencies:
   shared_preferences: ^2.0.15
   amplify_auth_cognito: ^0.5.0
   amplify_authenticator: ^0.1.1
-  # amplify_api: ^0.5.0
+  amplify_api: ^0.5.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -50,7 +50,12 @@ dependencies:
   firebase_core: ^1.17.0
   firebase_storage: ^10.2.16
   path_provider: ^2.0.10
-  smart_select: ^4.3.2
+  awesome_select: ^5.2.0
+  uuid: ^3.0.6
+  badges: ^2.0.2
+  riverpod: ^1.0.3
+  equatable: ^2.0.3
+  flutter_riverpod: ^1.0.4
 
 dev_dependencies:
   flutter_test:

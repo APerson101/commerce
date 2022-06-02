@@ -1,10 +1,13 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:commerce/models/ModelProvider.dart';
-import 'package:commerce/models/Users.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:uuid/uuid.dart';
 
 class BookingsController extends GetxController {
+  RxList<ListTile> companyBookings = <ListTile>[].obs;
+  RxString reviewText = ''.obs;
+  RxInt starsRating = 5.obs;
   Future<List<Users>> getUserNameFromID(String nameID) async {
     //returns the first result matching the ID
     return await Amplify.DataStore.query(Users.classType,
@@ -22,10 +25,27 @@ class BookingsController extends GetxController {
     });
     List<ListTile> tiles = [];
     for (var i = 0; i < bookings.length; i++) {
-      tiles.add(ListTile(
+      companyBookings.add(ListTile(
         leading: const Icon(Icons.person),
         title: Text(names[i]),
         subtitle: Text(times[i]),
+        trailing: bookings[i].done!
+            ? Container()
+            : ButtonBar(children: [
+                ElevatedButton(
+                    onPressed: () async {
+                      Amplify.DataStore.save(bookings[i].copyWith(done: true));
+                      Get.snackbar('booking', 'booking confirmed');
+                    },
+                    child: const Text("confirm")),
+                ElevatedButton(
+                    onPressed: () async {
+                      Amplify.DataStore.delete(bookings[i]);
+                      companyBookings.removeAt(i);
+                      Get.snackbar('booking', 'booking canceled');
+                    },
+                    child: const Text("Cancel")),
+              ]),
       ));
     }
     return tiles;
@@ -41,7 +61,8 @@ class BookingsController extends GetxController {
     return names;
   }
 
-  Future<List<ListTile>> getAllUserBookings(String userId) async {
+  Future<List<ListTile>> getAllUserBookings(
+      String userId, BuildContext context) async {
     var bookings = await Amplify.DataStore.query(Bookings.classType,
         where: Bookings.USER.eq(userId));
     var names = await _getNames(bookings);
@@ -55,99 +76,62 @@ class BookingsController extends GetxController {
         leading: const Icon(Icons.person),
         title: Text(names[i]),
         subtitle: Text(times[i]),
+        trailing: bookings[i].done!
+            ? ElevatedButton(
+                onPressed: () async {
+                  await Get.defaultDialog(
+                      onCancel: () => Get.back(),
+                      onConfirm: () async {
+                        await saveReview(userId, bookings[i].id);
+                        Get.back();
+                      },
+                      content: SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        height: MediaQuery.of(context).size.height * 0.9,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Obx(() => DropdownButton<int>(
+                                  value: starsRating.value,
+                                  items: [1, 2, 3, 4, 5]
+                                      .map((e) => DropdownMenuItem<int>(
+                                          child: Text(e.toString())))
+                                      .toList(),
+                                  onChanged: (newRating) =>
+                                      starsRating.value = newRating!)),
+                              TextField(
+                                onChanged: (newreview) =>
+                                    reviewText.value = newreview,
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20))),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ));
+                },
+                child: const Text("Review"))
+            : ElevatedButton(
+                onPressed: () async {
+                  Amplify.DataStore.delete(bookings[i]);
+                  companyBookings.removeAt(i);
+                  Get.snackbar('booking', 'booking canceled');
+                },
+                child: const Text("Cancel")),
       ));
     }
     return tiles;
   }
+
+  saveReview(String userId, String businessID) async {
+    //
+    await Amplify.DataStore.save<Reviews>(Reviews(
+        id: Uuid().v4(),
+        comment: reviewText.value,
+        userID: userId,
+        businessID: businessID,
+        stars: starsRating.value));
+  }
 }
-/*
-final item = Reviews(
-		userID: "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
-		businessID: "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
-		comment: "Lorem ipsum dolor sit amet",
-		stars: 1020);
-await Amplify.DataStore.save(item);
-
-final updatedItem = item.copyWith(
-		userID: "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
-		businessID: "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
-		comment: "Lorem ipsum dolor sit amet",
-		stars: 1020);
-await Amplify.DataStore.save(updatedItem);
-
-
-await Amplify.DataStore.delete(toDeleteItem);
-
-try {
-  List<Reviews> Reviewss = await Amplify.DataStore.query(Reviews.classType);
-} catch (e) {
-  print("Could not query DataStore: " + e);
-}*/
-
-/*
-final item = Bookings(
-		user: "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
-		business: "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
-		dateTime: TemporalDateTime.fromString("1970-01-01T12:30:23.999Z"));
-await Amplify.DataStore.save(item);
-
-final updatedItem = item.copyWith(
-		user: "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
-		business: "a3f4095e-39de-43d2-baf4-f8c16f0f6f4d",
-		dateTime: TemporalDateTime.fromString("1970-01-01T12:30:23.999Z"));
-await Amplify.DataStore.save(updatedItem);
-await Amplify.DataStore.delete(toDeleteItem);
-try {
-  List<Bookings> Bookingss = await Amplify.DataStore.query(Bookings.classType);
-} catch (e) {
-  print("Could not query DataStore: " + e);
-}
-*/
-
-/**
- * final updatedItem = item.copyWith(
-		type: "Lorem ipsum dolor sit amet",
-		location: "Lorem ipsum dolor sit amet",
-		about: "Lorem ipsum dolor sit amet",
-		cac: "Lorem ipsum dolor sit amet");
-await Amplify.DataStore.save(updatedItem);
-
-final item = Businesse(
-		type: "Lorem ipsum dolor sit amet",
-		location: "Lorem ipsum dolor sit amet",
-		about: "Lorem ipsum dolor sit amet",
-		cac: "Lorem ipsum dolor sit amet");
-await Amplify.DataStore.save(item);
-
-await Amplify.DataStore.delete(toDeleteItem);
-
-try {
-  List<Businesse> Businesses = await Amplify.DataStore.query(Businesse.classType);
-} catch (e) {
-  print("Could not query DataStore: " + e);
-}
- */
-
-/**
- * final item = Users(
-		name: "Lorem ipsum dolor sit amet",
-		phone: "Lorem ipsum dolor sit amet",
-		bank: "Lorem ipsum dolor sit amet",
-		isBusiness: true);
-await Amplify.DataStore.save(item);
-
-final updatedItem = item.copyWith(
-		name: "Lorem ipsum dolor sit amet",
-		phone: "Lorem ipsum dolor sit amet",
-		bank: "Lorem ipsum dolor sit amet",
-		isBusiness: true);
-await Amplify.DataStore.save(updatedItem);
-
-await Amplify.DataStore.delete(toDeleteItem);
-
-try {
-  List<Users> Userss = await Amplify.DataStore.query(Users.classType);
-} catch (e) {
-  print("Could not query DataStore: " + e);
-}
- */

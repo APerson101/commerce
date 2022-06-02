@@ -38,7 +38,8 @@ class BookingsView extends StatelessWidget {
     } else {
       // user is not a business
       return FutureBuilder(
-          future: controller.getAllUserBookings(_controller.user!.userId),
+          future:
+              controller.getAllUserBookings(_controller.user!.userId, context),
           builder: ((context, AsyncSnapshot<List<ListTile>> snapshot) {
             if (snapshot.hasData) {
               //

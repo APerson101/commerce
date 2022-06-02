@@ -164,15 +164,11 @@ class BusinessDetailsView extends StatelessWidget {
                                     child: const Text("Confirm Booking?"),
                                   ),
                                   onConfirm: () async {
-                                    bool status =
-                                        await controller.confirmBooking(
-                                            selectedTime.value,
-                                            selectedDay.value);
-                                    if (status) {
-                                      Get.back();
-                                      Get.snackbar(
-                                          'confirmation', "booking confirmed");
-                                    }
+                                    await controller.confirmBooking(
+                                        selectedTime.value,
+                                        selectedDay.value,
+                                        details);
+                                    Get.back();
                                   });
                             },
                             child: Card(

@@ -10,7 +10,7 @@ class SearchController extends GetxController {
   RxList<Businesses> searchResult = <Businesses>[].obs;
   search() async {
     currentState.value = currentSearchState.searching;
-
+    print('searching for ${searchPhrase.value}');
     var result = await Amplify.DataStore.query(
       Users.classType,
       where: Users.NAME

@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:commerce/controllers/home_controller.dart';
 import 'package:commerce/views/main_app_views/bookings_view.dart';
 import 'package:commerce/views/main_app_views/dashboard_view.dart';
@@ -47,7 +48,11 @@ class HomePage extends StatelessWidget {
             String label;
             switch (page) {
               case views.bookings:
-                icon = const Icon(Icons.calendar_view_month);
+                icon = Badge(
+                  badgeContent: Obx(() =>
+                      Text(controller.unfulfilledBookings.length.toString())),
+                  child: const Icon(Icons.calendar_view_month),
+                );
                 label = describeEnum(page);
                 break;
               case views.dashboard:

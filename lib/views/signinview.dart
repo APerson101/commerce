@@ -1,8 +1,8 @@
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+// import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
-import 'package:amplify_authenticator/src/state/authenticator_state.dart';
-import 'package:commerce/views/home.dart';
-import 'package:commerce/views/signupview.dart';
+// import 'package:amplify_authenticator/src/state/authenticator_state.dart';
+// import 'package:commerce/views/home.dart';
+// import 'package:commerce/views/signupview.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,14 +23,6 @@ class SignInView extends StatelessWidget {
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                const Text("Sign In"),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text("To Continue using"),
-                    FlutterLogo(size: 24),
-                  ],
-                ),
                 SignInForm(),
               ]),
         ),
@@ -42,8 +34,7 @@ class SignInView extends StatelessWidget {
             const Text('New user?'),
             TextButton(
                 onPressed: () {
-                  authenticatorState
-                      .changeStep(AuthenticatorStep.confirmSignUp);
+                  authenticatorState.changeStep(AuthenticatorStep.signUp);
                 },
                 child: const Text('Create Account'))
           ],

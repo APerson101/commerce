@@ -4,6 +4,9 @@ type Businesses @model @auth(rules: [{allow: public}]) {
   location: String
   about: String
   cac: String
+  AvailableDays: [Int]
+  StarTimes: [String]
+  EndTimes: [String]
 }
 
 type Reviews @model @auth(rules: [{allow: public}]) {
@@ -27,4 +30,6 @@ type Bookings @model @auth(rules: [{allow: public}]) {
   user: ID
   business: ID
   dateTime: AWSDateTime
+  done: Boolean
 }
+ 

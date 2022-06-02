@@ -31,6 +31,7 @@ class Bookings extends Model {
   final String? _user;
   final String? _business;
   final TemporalDateTime? _dateTime;
+  final bool? _done;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -54,6 +55,10 @@ class Bookings extends Model {
     return _dateTime;
   }
   
+  bool? get done {
+    return _done;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -62,14 +67,15 @@ class Bookings extends Model {
     return _updatedAt;
   }
   
-  const Bookings._internal({required this.id, user, business, dateTime, createdAt, updatedAt}): _user = user, _business = business, _dateTime = dateTime, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Bookings._internal({required this.id, user, business, dateTime, done, createdAt, updatedAt}): _user = user, _business = business, _dateTime = dateTime, _done = done, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Bookings({String? id, String? user, String? business, TemporalDateTime? dateTime}) {
+  factory Bookings({String? id, String? user, String? business, TemporalDateTime? dateTime, bool? done}) {
     return Bookings._internal(
       id: id == null ? UUID.getUUID() : id,
       user: user,
       business: business,
-      dateTime: dateTime);
+      dateTime: dateTime,
+      done: done);
   }
   
   bool equals(Object other) {
@@ -83,7 +89,8 @@ class Bookings extends Model {
       id == other.id &&
       _user == other._user &&
       _business == other._business &&
-      _dateTime == other._dateTime;
+      _dateTime == other._dateTime &&
+      _done == other._done;
   }
   
   @override
@@ -98,6 +105,7 @@ class Bookings extends Model {
     buffer.write("user=" + "$_user" + ", ");
     buffer.write("business=" + "$_business" + ", ");
     buffer.write("dateTime=" + (_dateTime != null ? _dateTime!.format() : "null") + ", ");
+    buffer.write("done=" + (_done != null ? _done!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -105,12 +113,13 @@ class Bookings extends Model {
     return buffer.toString();
   }
   
-  Bookings copyWith({String? id, String? user, String? business, TemporalDateTime? dateTime}) {
+  Bookings copyWith({String? id, String? user, String? business, TemporalDateTime? dateTime, bool? done}) {
     return Bookings._internal(
       id: id ?? this.id,
       user: user ?? this.user,
       business: business ?? this.business,
-      dateTime: dateTime ?? this.dateTime);
+      dateTime: dateTime ?? this.dateTime,
+      done: done ?? this.done);
   }
   
   Bookings.fromJson(Map<String, dynamic> json)  
@@ -118,17 +127,19 @@ class Bookings extends Model {
       _user = json['user'],
       _business = json['business'],
       _dateTime = json['dateTime'] != null ? TemporalDateTime.fromString(json['dateTime']) : null,
+      _done = json['done'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'user': _user, 'business': _business, 'dateTime': _dateTime?.format(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'user': _user, 'business': _business, 'dateTime': _dateTime?.format(), 'done': _done, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "bookings.id");
   static final QueryField USER = QueryField(fieldName: "user");
   static final QueryField BUSINESS = QueryField(fieldName: "business");
   static final QueryField DATETIME = QueryField(fieldName: "dateTime");
+  static final QueryField DONE = QueryField(fieldName: "done");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Bookings";
     modelSchemaDefinition.pluralName = "Bookings";
@@ -162,6 +173,12 @@ class Bookings extends Model {
       key: Bookings.DATETIME,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Bookings.DONE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.bool)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
