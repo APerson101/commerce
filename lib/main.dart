@@ -72,6 +72,7 @@ class MainLoader extends ConsumerWidget {
     final signUpcomplete = ref.watch(signupProvider);
     return newUser.when(
         data: (status) {
+          Get.put(MainController(status['authUser'] as AuthUser));
           if (status['newUser']) {
             if (signUpcomplete) {
               return MainP();

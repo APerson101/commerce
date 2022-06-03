@@ -27,9 +27,6 @@ class Loading extends LoginState {
 
 enum LoginStates { loggedOut, newUser, loggedIn, loading }
 
-final loginStateProvider =
-    StateNotifierProvider((ref) => MainController(LoginStates.loading));
-
 final FutureProvider<Map<String, dynamic>> newUserProvider =
     FutureProvider((ref) async {
   bool newuser = false;
@@ -56,13 +53,13 @@ final loadUserProvider = FutureProvider((ref) async {
   return await Amplify.Auth.getCurrentUser();
 });
 
-class MainController extends StateNotifier<LoginStates> {
-  AuthUser? user;
+class MainController extends GetxController {
+  AuthUser user;
   bool isUserBusiness = false;
   RxBool isSignUp = false.obs;
   Rx<LoadingStatus> status = LoadingStatus.loading.obs;
 
-  MainController(LoginStates state) : super(state);
+  MainController(this.user);
 
   loadDetails() async {
     await getUserDetails();

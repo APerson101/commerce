@@ -16,7 +16,7 @@ class BusinessDetailsView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: FutureBuilder(
-          future: controller.getDetails(_controller.user!.userId),
+          future: controller.getDetails(_controller.user.userId),
           builder: (context, AsyncSnapshot<BusinessDetailsModel> snapshot) {
             return SingleChildScrollView(
               child: Column(
@@ -59,135 +59,138 @@ class BusinessDetailsView extends StatelessWidget {
     var bookButton = ElevatedButton(
         onPressed: () {
           Get.defaultDialog(
+              title: 'Select Day',
               content: ObxValue((RxString selection) {
-            if (selection.value == 'day') {
-              return SingleChildScrollView(
-                  child: Column(
-                      children: getAvailableDays().map((day) {
-                switch (day) {
-                  case 1:
-                    return GestureDetector(
-                      onTap: () {
-                        currentViewDay.value = 'time';
-                        selectedDay.value = day;
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Card(child: Text('Sunday')),
-                      ),
-                    );
-                  case 2:
-                    return GestureDetector(
-                      onTap: () {
-                        currentViewDay.value = 'time';
-
-                        selectedDay.value = day;
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Card(child: Text('Monday')),
-                      ),
-                    );
-                  case 3:
-                    return GestureDetector(
-                      onTap: () {
-                        currentViewDay.value = 'time';
-
-                        selectedDay.value = day;
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Card(child: Text('Tuesday')),
-                      ),
-                    );
-                  case 4:
-                    return GestureDetector(
-                      onTap: () {
-                        currentViewDay.value = 'time';
-
-                        selectedDay.value = day;
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Card(child: Text('Wednesday')),
-                      ),
-                    );
-                  case 5:
-                    return GestureDetector(
-                        onTap: () {
-                          currentViewDay.value = 'time';
-
-                          selectedDay.value = day;
-                        },
-                        child: const Padding(
+                if (selection.value == 'day') {
+                  return SingleChildScrollView(
+                      child: Column(
+                          children: getAvailableDays().map((day) {
+                    switch (day) {
+                      case 1:
+                        return GestureDetector(
+                          onTap: () {
+                            currentViewDay.value = 'time';
+                            selectedDay.value = day;
+                          },
+                          child: const Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Card(child: Text('Thursday'))));
-                  case 6:
-                    return GestureDetector(
-                        onTap: () {
-                          currentViewDay.value = 'time';
+                            child: Card(child: Text('Sunday')),
+                          ),
+                        );
+                      case 2:
+                        return GestureDetector(
+                          onTap: () {
+                            currentViewDay.value = 'time';
 
-                          selectedDay.value = day;
-                        },
-                        child: const Padding(
+                            selectedDay.value = day;
+                          },
+                          child: const Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Card(child: Text('Friday'))));
-                  case 7:
-                    return GestureDetector(
-                        onTap: () {
-                          currentViewDay.value = 'time';
+                            child: Card(child: Text('Monday')),
+                          ),
+                        );
+                      case 3:
+                        return GestureDetector(
+                          onTap: () {
+                            currentViewDay.value = 'time';
 
-                          selectedDay.value = day;
-                        },
-                        child: const Padding(
+                            selectedDay.value = day;
+                          },
+                          child: const Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Card(child: Text('Saturday'))));
-                  default:
-                    return const Text('');
-                }
-              }).toList()));
-            } else if (selection.value == 'time') {
-              return SingleChildScrollView(
-                child: Column(
-                  children: getAvailableTimes(4)
-                      .map((time) => Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: GestureDetector(
-                            onTap: () async {
-                              selectedTime.value = time;
-                              await Get.defaultDialog(
-                                  content: SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.6,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.6,
-                                    child: const Text("Confirm Booking?"),
-                                  ),
-                                  onConfirm: () async {
-                                    await controller.confirmBooking(
-                                        selectedTime.value,
-                                        selectedDay.value,
-                                        details);
-                                    Get.back();
-                                  });
+                            child: Card(child: Text('Tuesday')),
+                          ),
+                        );
+                      case 4:
+                        return GestureDetector(
+                          onTap: () {
+                            currentViewDay.value = 'time';
+
+                            selectedDay.value = day;
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Card(child: Text('Wednesday')),
+                          ),
+                        );
+                      case 5:
+                        return GestureDetector(
+                            onTap: () {
+                              currentViewDay.value = 'time';
+
+                              selectedDay.value = day;
                             },
-                            child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(time)),
-                          )))
-                      .toList(),
-                ),
-              );
-            } else if (selection.value == 'loading') {
-              return const Center(
-                child: CircularProgressIndicator.adaptive(),
-              );
-            } else {
-              return const Center(child: Text("Unable to complete"));
-            }
-          }, currentViewDay));
+                            child: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Card(child: Text('Thursday'))));
+                      case 6:
+                        return GestureDetector(
+                            onTap: () {
+                              currentViewDay.value = 'time';
+
+                              selectedDay.value = day;
+                            },
+                            child: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Card(child: Text('Friday'))));
+                      case 7:
+                        return GestureDetector(
+                            onTap: () {
+                              currentViewDay.value = 'time';
+
+                              selectedDay.value = day;
+                            },
+                            child: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Card(child: Text('Saturday'))));
+                      default:
+                        return const Text('');
+                    }
+                  }).toList()));
+                } else if (selection.value == 'time') {
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: getAvailableTimes(4)
+                          .map((time) => Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  selectedTime.value = time;
+                                  await Get.defaultDialog(
+                                      content: SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.6,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.6,
+                                        child: const Text("Confirm Booking?"),
+                                      ),
+                                      onConfirm: () async {
+                                        await controller.confirmBooking(
+                                            selectedTime.value,
+                                            selectedDay.value,
+                                            details);
+                                        Get.back();
+                                      });
+                                },
+                                child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(time)),
+                              )))
+                          .toList(),
+                    ),
+                  );
+                } else if (selection.value == 'loading') {
+                  return const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  );
+                } else {
+                  return const Center(child: Text("Unable to complete"));
+                }
+              }, currentViewDay));
         },
         child: const Text("Book now"));
 

@@ -17,18 +17,33 @@ class SearchView extends StatelessWidget {
         // RxList<Businesses>
         switch (state.value) {
           case currentSearchState.searching:
-            return const Scaffold(
-                body: Center(child: CircularProgressIndicator.adaptive()));
+            return const Center(child: CircularProgressIndicator.adaptive());
           case currentSearchState.done:
             var values = controller.searchResult;
             if (values.isNotEmpty) {
               return searchResults(context);
             } else {
-              return const Scaffold(
-                  body: Center(child: Text("No search Result")));
+              return SingleChildScrollView(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: const [Text("No search Result")]));
             }
+          case currentSearchState.idle:
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [Text("Search for anything")],
+              ),
+            );
+
           default:
-            return const Scaffold(body: Center(child: Text("Unknown Error")));
+            return SingleChildScrollView(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: const [Text("Unknown Error")]));
         }
       }, controller.currentState)
     ]);
@@ -115,15 +130,6 @@ class SearchView extends StatelessWidget {
   Widget searchResults(BuildContext context) {
     return ObxValue((Rx<currentSearchState> state) {
       switch (state.value) {
-        case currentSearchState.idle:
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [Text("Search for anything")],
-            ),
-          );
-
         case currentSearchState.searching:
           return const Center(child: CircularProgressIndicator.adaptive());
         case currentSearchState.none:

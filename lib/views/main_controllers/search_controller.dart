@@ -23,10 +23,12 @@ class SearchController extends GetxController {
           pagination: const QueryPagination.firstResult());
       searchResult.add(res[0]);
     });
-    if (searchResult.isNotEmpty) {
-      currentState.value = currentSearchState.done;
-    } else {
-      currentState.value = currentSearchState.error;
-    }
+    currentState.value = currentSearchState.done;
   }
 }
+
+
+// search ui
+// profile ui
+// booking ui
+//dashboard search ui
