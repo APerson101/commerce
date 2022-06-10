@@ -11,45 +11,86 @@ class SearchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(children: [
-      header(context),
-      ObxValue((Rx<currentSearchState> state) {
-        // RxList<Businesses>
-        switch (state.value) {
-          case currentSearchState.searching:
-            return const Center(child: CircularProgressIndicator.adaptive());
-          case currentSearchState.done:
-            var values = controller.searchResult;
-            if (values.isNotEmpty) {
-              return searchResults(context);
-            } else {
+    return MaterialApp(
+        home: Scaffold(
+      body: ListView(children: [
+        header(context),
+        ObxValue((Rx<CurrentSearchState> state) {
+          switch (state.value) {
+            case CurrentSearchState.searching:
+              return const Center(child: CircularProgressIndicator.adaptive());
+            case CurrentSearchState.done:
+              var values = controller.searchResult.value;
+              if (values.businesses.isNotEmpty) {
+                return searchResults(context);
+              } else {
+                return SingleChildScrollView(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const [Text("No search Result")]));
+              }
+            case CurrentSearchState.idle:
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [Text("Search for Anything")],
+                ),
+              );
+
+            default:
               return SingleChildScrollView(
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [Text("No search Result")]));
-            }
-          case currentSearchState.idle:
-            return SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [Text("Search for anything")],
-              ),
-            );
-
-          default:
-            return SingleChildScrollView(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: const [Text("Unknown Error")]));
-        }
-      }, controller.currentState)
-    ]);
+                      children: const [Text("Unknown Error")]));
+          }
+        }, controller.currentState)
+      ]),
+    ));
   }
 
   Widget header(BuildContext context) {
+    List<int> times = [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+    ];
+
+    List<DropdownMenuItem<int>> menuitmes = [];
+    menuitmes.add(
+      const DropdownMenuItem(
+        child: Text('Enter Time'),
+        value: 300,
+      ),
+    );
+    menuitmes.addAll(times
+        .map((number) =>
+            DropdownMenuItem<int>(value: number, child: Text('$number : 00')))
+        .toList());
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.25,
       color: Colors.redAccent,
@@ -61,7 +102,7 @@ class SearchView extends StatelessWidget {
             child: TextField(
               onChanged: (search) => controller.searchPhrase.value = search,
               decoration: InputDecoration(
-                hintText: "What are you looking for",
+                hintText: "What are you looking for?",
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 suffixIcon: IconButton(
@@ -77,10 +118,11 @@ class SearchView extends StatelessWidget {
             title: Row(children: [
               Expanded(
                 child: SizedBox(
-                  // width: MediaQuery.of(context).size.width * 0.6,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextField(
+                      onChanged: (location) =>
+                          controller.locationToBeSearched.value = location,
                       decoration: InputDecoration(
                         hintText: "Location",
                         border: OutlineInputBorder(
@@ -92,18 +134,17 @@ class SearchView extends StatelessWidget {
                 flex: 2,
               ),
               Expanded(
-                  child: SizedBox(
-                    // width: MediaQuery.of(context).size.width * 0.6,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "When?",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                        ),
-                      ),
-                    ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Obx(() {
+                      int? vl = controller.searchperiod.value;
+                      return DropdownButton<int>(
+                          hint: const Text("Enter time"),
+                          value: vl,
+                          items: menuitmes,
+                          onChanged: (selectednumber) =>
+                              controller.searchperiod.value = selectednumber!);
+                    }),
                   ),
                   flex: 1)
             ]),
@@ -128,15 +169,15 @@ class SearchView extends StatelessWidget {
   }
 
   Widget searchResults(BuildContext context) {
-    return ObxValue((Rx<currentSearchState> state) {
+    return ObxValue((Rx<CurrentSearchState> state) {
       switch (state.value) {
-        case currentSearchState.searching:
+        case CurrentSearchState.searching:
           return const Center(child: CircularProgressIndicator.adaptive());
-        case currentSearchState.none:
-          return const Center(child: Text("No such result"));
-        case currentSearchState.error:
+        case CurrentSearchState.none:
+          return const Center(child: Text("No Such result"));
+        case CurrentSearchState.error:
           return const Center(child: Text("Unknown Error"));
-        case currentSearchState.done:
+        case CurrentSearchState.done:
           return displaySearchResults(context);
         default:
           return Container();
@@ -145,30 +186,34 @@ class SearchView extends StatelessWidget {
   }
 
   Widget displaySearchResults(context) {
-    List<Businesses> businesses = controller.searchResult;
+    SearchResult businesses = controller.searchResult.value;
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: businessesChildren(businesses, context),
+        children: businessesChildren(
+            businesses.businesses, businesses.searchResult, context),
       ),
     );
   }
 
-  businessesChildren(List<Businesses> businesses, BuildContext context) {
+  List<Card> businessesChildren(
+      List<Businesses> businesses, List<Users> users, BuildContext context) {
     return businesses.map((business) {
-      //
       return Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: GestureDetector(
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
-                builder: ((context) => BusinessDetailsView())));
+                builder: ((context) => BusinessDetailsView(
+                    selectedBusiness: GetDetails(
+                        business: business,
+                        current: users[businesses.indexOf(business)])))));
           },
           child: ListTile(
             title: Text(business.location!),
             subtitle: Text(business.about!),
-            // leading: Text(business.),
+            leading: Text(users[businesses.indexOf(business)].name!),
           ),
         ),
       );

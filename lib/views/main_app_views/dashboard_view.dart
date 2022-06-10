@@ -121,18 +121,18 @@ class DashboardView extends StatelessWidget {
                   carousalItem(),
                 ]),
               )),
-          ListTile(
-            title: const Text("Special Offers"),
-            subtitle: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    specialOffers(),
-                    specialOffers(),
-                    specialOffers(),
-                  ],
-                )),
-          ),
+          // ListTile(
+          //   title: const Text("Special Offers"),
+          //   subtitle: SingleChildScrollView(
+          //       scrollDirection: Axis.horizontal,
+          //       child: Row(
+          //         children: [
+          //           specialOffers(),
+          //           specialOffers(),
+          //           specialOffers(),
+          //         ],
+          //       )),
+          // ),
         ],
       ),
     );

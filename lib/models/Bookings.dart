@@ -32,6 +32,7 @@ class Bookings extends Model {
   final String? _business;
   final TemporalDateTime? _dateTime;
   final bool? _done;
+  final String? _reservation;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -43,12 +44,30 @@ class Bookings extends Model {
     return id;
   }
   
-  String? get user {
-    return _user;
+  String get user {
+    try {
+      return _user!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
-  String? get business {
-    return _business;
+  String get business {
+    try {
+      return _business!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
   TemporalDateTime? get dateTime {
@@ -59,6 +78,10 @@ class Bookings extends Model {
     return _done;
   }
   
+  String? get reservation {
+    return _reservation;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -67,15 +90,16 @@ class Bookings extends Model {
     return _updatedAt;
   }
   
-  const Bookings._internal({required this.id, user, business, dateTime, done, createdAt, updatedAt}): _user = user, _business = business, _dateTime = dateTime, _done = done, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Bookings._internal({required this.id, required user, required business, dateTime, done, reservation, createdAt, updatedAt}): _user = user, _business = business, _dateTime = dateTime, _done = done, _reservation = reservation, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Bookings({String? id, String? user, String? business, TemporalDateTime? dateTime, bool? done}) {
+  factory Bookings({String? id, required String user, required String business, TemporalDateTime? dateTime, bool? done, String? reservation}) {
     return Bookings._internal(
       id: id == null ? UUID.getUUID() : id,
       user: user,
       business: business,
       dateTime: dateTime,
-      done: done);
+      done: done,
+      reservation: reservation);
   }
   
   bool equals(Object other) {
@@ -90,7 +114,8 @@ class Bookings extends Model {
       _user == other._user &&
       _business == other._business &&
       _dateTime == other._dateTime &&
-      _done == other._done;
+      _done == other._done &&
+      _reservation == other._reservation;
   }
   
   @override
@@ -106,6 +131,7 @@ class Bookings extends Model {
     buffer.write("business=" + "$_business" + ", ");
     buffer.write("dateTime=" + (_dateTime != null ? _dateTime!.format() : "null") + ", ");
     buffer.write("done=" + (_done != null ? _done!.toString() : "null") + ", ");
+    buffer.write("reservation=" + "$_reservation" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -113,13 +139,14 @@ class Bookings extends Model {
     return buffer.toString();
   }
   
-  Bookings copyWith({String? id, String? user, String? business, TemporalDateTime? dateTime, bool? done}) {
+  Bookings copyWith({String? id, String? user, String? business, TemporalDateTime? dateTime, bool? done, String? reservation}) {
     return Bookings._internal(
       id: id ?? this.id,
       user: user ?? this.user,
       business: business ?? this.business,
       dateTime: dateTime ?? this.dateTime,
-      done: done ?? this.done);
+      done: done ?? this.done,
+      reservation: reservation ?? this.reservation);
   }
   
   Bookings.fromJson(Map<String, dynamic> json)  
@@ -128,11 +155,12 @@ class Bookings extends Model {
       _business = json['business'],
       _dateTime = json['dateTime'] != null ? TemporalDateTime.fromString(json['dateTime']) : null,
       _done = json['done'],
+      _reservation = json['reservation'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'user': _user, 'business': _business, 'dateTime': _dateTime?.format(), 'done': _done, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'user': _user, 'business': _business, 'dateTime': _dateTime?.format(), 'done': _done, 'reservation': _reservation, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "bookings.id");
@@ -140,6 +168,7 @@ class Bookings extends Model {
   static final QueryField BUSINESS = QueryField(fieldName: "business");
   static final QueryField DATETIME = QueryField(fieldName: "dateTime");
   static final QueryField DONE = QueryField(fieldName: "done");
+  static final QueryField RESERVATION = QueryField(fieldName: "reservation");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Bookings";
     modelSchemaDefinition.pluralName = "Bookings";
@@ -159,13 +188,13 @@ class Bookings extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: Bookings.USER,
-      isRequired: false,
+      isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: Bookings.BUSINESS,
-      isRequired: false,
+      isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
@@ -179,6 +208,12 @@ class Bookings extends Model {
       key: Bookings.DONE,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.bool)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Bookings.RESERVATION,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(

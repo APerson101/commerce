@@ -1,13 +1,19 @@
+import 'dart:typed_data';
+
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:commerce/controllers/signupcontroller.dart';
+import 'package:commerce/views/main_app_views/profile_view.dart';
+import 'package:commerce/views/main_app_views/search_view.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'amplifyconfiguration.dart';
 import 'controllers/main_controller.dart';
 import 'firebase_options.dart';
@@ -34,33 +40,60 @@ void main() async {
     try {
       _amplifyConfigured.value = true;
     } catch (e) {
-      print(e);
+      print({
+        e,
+      });
     }
   }
 
-  await initApp();
-  runApp(ProviderScope(child: GetMaterialApp(home: MyApp())));
+  // await initApp();
+  // runApp(ProviderScope(
+  //     child: GetMaterialApp(
+  //   home: ProfileView(),
+  // )));
+  runApp(ProviderScope(child: GetMaterialApp(home: ProfileView())));
 }
+
+final getV = FutureProvider((ref) async {
+  await Future.delayed(const Duration(seconds: 3));
+  return true;
+});
 
 class MyApp extends ConsumerWidget {
   MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Authenticator(
-        authenticatorBuilder: (BuildContext context, AuthenticatorState state) {
-          switch (state.currentStep) {
-            case AuthenticatorStep.signIn:
-              return SignInView(authenticatorState: state);
-            case AuthenticatorStep.loading:
-              return const Scaffold(
-                  body: Center(child: CircularProgressIndicator.adaptive()));
-            case AuthenticatorStep.signUp:
-              return SignupFirstView(authenticatorState: state);
-            default:
-              return null;
-          }
-        },
-        child: const MainLoader());
+    return ref.watch(getV).when(data: (bool data) {
+      if (data) {
+        return Authenticator(
+            authenticatorBuilder:
+                (BuildContext context, AuthenticatorState state) {
+              switch (state.currentStep) {
+                case AuthenticatorStep.signIn:
+                  return SignInView(authenticatorState: state);
+                case AuthenticatorStep.loading:
+                  return const Scaffold(
+                      body:
+                          Center(child: CircularProgressIndicator.adaptive()));
+                case AuthenticatorStep.signUp:
+                  return SignupFirstView(authenticatorState: state);
+                default:
+                  return null;
+              }
+            },
+            child: const MainLoader());
+      }
+      return Container();
+    }, error: (Object error, StackTrace? stackTrace) {
+      return const Scaffold(
+          body: Center(child: Text("Omo, this Error Choke!!")));
+    }, loading: () {
+      return const Scaffold(
+          body: Center(
+        child: CircularProgressIndicator.adaptive(),
+      ));
+    });
   }
 }
 
@@ -72,16 +105,38 @@ class MainLoader extends ConsumerWidget {
     final signUpcomplete = ref.watch(signupProvider);
     return newUser.when(
         data: (status) {
-          Get.put(MainController(status['authUser'] as AuthUser));
-          if (status['newUser']) {
-            if (signUpcomplete) {
-              return MainP();
+          if (status.isNotEmpty) {
+            print("user is new");
+            if (status['authUser'] != null) {
+              print("user is authenitcated");
+
+              Get.put(MainController(status['authUser'] as AuthUser));
             } else {
-              return SignUpContdView(
-                  userId: (status['authUser'] as AuthUser).userId);
+              print("Unauthenitcated");
+              return MainP();
+            }
+            if (status['newUser']) {
+              print("HERE 3");
+
+              if (signUpcomplete) {
+                print("HERE 2");
+
+                return MainP();
+              } else {
+                print("HERE 1");
+                return SignUpContdView(
+                    userId: (status['authUser'] as AuthUser).userId);
+              }
+            } else {
+              print("HERE 4");
+
+              return MainP();
             }
           } else {
-            return MainP();
+            return const Scaffold(
+                body: Center(
+              child: CircularProgressIndicator.adaptive(),
+            ));
           }
         },
         loading: () {
@@ -177,8 +232,46 @@ class MainP extends StatelessWidget {
       darkTheme: customDarkTheme,
       themeMode: ThemeMode.system,
       builder: Authenticator.builder(),
-      title: 'E commerce',
+      title: 'E Commerce',
       home: Scaffold(body: HomePage()),
+    );
+  }
+}
+
+class ImagSender extends StatelessWidget {
+  ImagSender({Key? key}) : super(key: key);
+  List<Uint8List> files = [];
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+          child: Column(
+        children: [
+          ElevatedButton(
+              onPressed: () async {
+                List<XFile>? allFIiles = await ImagePicker().pickMultiImage();
+                allFIiles?.forEach((element) async {
+                  var file = await element.readAsBytes();
+                  files.add(file);
+                });
+              },
+              child: const Text("select images")),
+          ElevatedButton(
+              onPressed: () async {
+                files.forEach((file) async {
+                  FirebaseStorage.instance
+                      .ref('Businesses/Hair Salon')
+                      .child('image ${files.indexOf(file)}.png')
+                      .putData(
+                          file,
+                          SettableMetadata(
+                              contentType: 'image/png',
+                              customMetadata: {'userID': '4421'}));
+                });
+              },
+              child: const Text("Send"))
+        ],
+      )),
     );
   }
 }

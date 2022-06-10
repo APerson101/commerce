@@ -12,7 +12,7 @@ class BookingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     if (_controller.isUserBusiness) {
       return FutureBuilder(
-          future: controller.getAllCompanyBookings(_controller.user!.userId),
+          future: controller.getAllCompanyBookings(_controller.user.userId),
           builder: ((context, AsyncSnapshot<List<ListTile>> snapshot) {
             if (snapshot.hasData) {
               //
@@ -39,7 +39,7 @@ class BookingsView extends StatelessWidget {
       // user is not a business
       return FutureBuilder(
           future:
-              controller.getAllUserBookings(_controller.user!.userId, context),
+              controller.getAllUserBookings(_controller.user.userId, context),
           builder: ((context, AsyncSnapshot<List<ListTile>> snapshot) {
             if (snapshot.hasData) {
               //

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 class DashBoardController extends GetxController {
   RxList<List<String?>> allItems = <List<String?>>[].obs;
+
   RxString searchText = ''.obs;
   RxList<Businesses> searchResultBusinesses = <Businesses>[].obs;
   RxList<Users> searchResultNames = <Users>[].obs;
@@ -25,15 +26,11 @@ class DashBoardController extends GetxController {
       var list_of_result_categories = await _storage.ref(eahc).listAll();
       List<Reference> all_businesses = list_of_result_categories.items;
       all_businesses.forEach((all) async {
-        var list_of_business_images =
-            await _storage.ref(all.fullPath).listAll();
-        List<Reference> image_references = list_of_business_images.items;
+        String? data = await all.getDownloadURL();
+        var metadata = await _storage.ref().getMetadata();
         List<String?> imagesData = [];
-        image_references.forEach((item) async {
-          String? data = await item.getDownloadURL();
-          imagesData.add(data);
-          this.allItems.add(imagesData);
-        });
+        imagesData.add(data);
+        this.allItems.add(imagesData);
       });
     });
     return allItems;

@@ -5,8 +5,7 @@ type Businesses @model @auth(rules: [{allow: public}]) {
   about: String
   cac: String
   AvailableDays: [Int]
-  StarTimes: [String]
-  EndTimes: [String]
+  availableTimes: [String]
 }
 
 type Reviews @model @auth(rules: [{allow: public}]) {
@@ -20,16 +19,20 @@ type Reviews @model @auth(rules: [{allow: public}]) {
 type Users @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String
-  photo: String
   bank: String
   isBusiness: Boolean
+  country: String
+  number: String
+  cac: String
+  pics: [String!]!
 }
 
 type Bookings @model @auth(rules: [{allow: public}]) {
   id: ID!
-  user: ID
-  business: ID
+  user: ID!
+  business: ID!
   dateTime: AWSDateTime
   done: Boolean
+  reservation: String
 }
  

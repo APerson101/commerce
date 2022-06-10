@@ -1,9 +1,13 @@
 import 'dart:io';
 import 'package:awesome_select/awesome_select.dart';
+import 'package:commerce/controllers/signincontroller.dart';
+import 'package:country_picker/country_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:time_range_picker/time_range_picker.dart';
 import '../controllers/signupcontroller.dart';
 // import '../main.dart';
 
@@ -11,6 +15,8 @@ class SignUpContdView extends ConsumerWidget {
   SignUpContdView({Key? key, required this.userId}) : super(key: key);
   final String userId;
   final SignUpController controller = Get.put(SignUpController());
+  final SignInController controller_ = Get.put(SignInController());
+  // final SignInController controller_ = Get.find();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ObxValue((Rx<signUpStates> current) {
@@ -46,69 +52,123 @@ class SignUpContdView extends ConsumerWidget {
   }
 
   Scaffold signUpSheet(BuildContext context) {
+    controller_.asServiceProvider.value
+        ? controller.name.value = "Business Name"
+        : controller.name.value = "Full Name";
+
     return Scaffold(
+        appBar: AppBar(
+          title: Image.asset('images/logo.jpeg'),
+        ),
         body: Padding(
             padding:
                 const EdgeInsets.only(left: 16, right: 16, top: 48, bottom: 16),
             child: SingleChildScrollView(
                 child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                  Obx(() => CheckboxListTile(
-                      title: const Text("As service Provider"),
-                      contentPadding: const EdgeInsets.all(30),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      value: controller.asServiceProvider.value,
-                      onChanged: (newValue) {
-                        controller.asServiceProvider.value = newValue!;
-                        if (newValue) {
-                          controller.name.value = "Business Name";
-                        } else {
-                          controller.name.value = "Full Name";
-                        }
-                      })),
-                  Obx(() => TextField(
+                  Padding(
+                    padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
+                    child: Row(children: const [
+                      Text("Create Account",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18)),
+                      Spacer()
+                    ]),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
+                    child: Obx(() => OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                              minimumSize: Size(
+                                  MediaQuery.of(context).size.width * 0.75, 60),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20))),
+                          onPressed: () {
+                            showCountryPicker(
+                                context: context,
+                                onSelect: (country_) {
+                                  controller.selectedCountry.value =
+                                      country_.displayNameNoCountryCode;
+                                });
+                          },
+                          child: Row(children: [
+                            Text(controller.selectedCountry.value),
+                            Spacer()
+                          ]),
+                        )),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
+                    child: TextField(
+                      onChanged: (number) =>
+                          controller.phonenumber.value = number,
                       decoration: InputDecoration(
-                          hintText: controller.name.value,
-                          border: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)))),
-                      onChanged: (newValue) {
-                        controller.fullname.value = newValue;
-                      })),
-                  Obx(() => controller.asServiceProvider.value
-                      ? availability()
-                      : Container()),
-                  Obx(() => controller.asServiceProvider.value
-                      ? images(context)
-                      : Container()),
-                  Obx(() => controller.asServiceProvider.value
-                      ? locationAbout(context)
-                      : Container()),
-                  signUpButton()
+                          hintText: 'Phone Number (Optional)',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20))),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
+                    child: Obx(() => TextField(
+                        decoration: InputDecoration(
+                            hintText: controller.name.value,
+                            border: const OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)))),
+                        onChanged: (newValue) {
+                          controller.fullname.value = newValue;
+                        })),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 18.0, bottom: 8.0),
+                    child: Obx(() => controller_.asServiceProvider.value
+                        // ? teste(context)
+                        ? availability(context)
+                        : Container()),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
+                    child: images(context),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
+                    child: Obx(() => controller_.asServiceProvider.value
+                        ? locationAbout(context)
+                        : Container()),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
+                    child: signUpButton(context),
+                  )
                 ]))));
   }
 
-  Widget signUpButton() {
+  Widget signUpButton(BuildContext context) {
     return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            minimumSize: Size(MediaQuery.of(context).size.width * 0.75, 60),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20))),
         onPressed: () async {
           await controller.signUp(userId);
         },
         child: const Text("Create Account"));
   }
 
-  Widget availability() {
+  Widget availability(BuildContext context) {
     /**
-     * dislay the days and time accordingly
+     * display the days and time accordingly
      */
     List<S2Choice<int>> days_of_the_week = [
-      S2Choice<int>(value: 1, title: 'Sunday'),
-      S2Choice<int>(value: 2, title: 'Monday'),
-      S2Choice<int>(value: 3, title: 'Tuesday'),
-      S2Choice<int>(value: 4, title: 'Wednesday'),
-      S2Choice<int>(value: 5, title: 'Thursday'),
-      S2Choice<int>(value: 6, title: 'Friday'),
-      S2Choice<int>(value: 7, title: 'Saturday'),
+      S2Choice<int>(value: 0, title: 'Sunday'),
+      S2Choice<int>(value: 1, title: 'Monday'),
+      S2Choice<int>(value: 2, title: 'Tuesday'),
+      S2Choice<int>(value: 3, title: 'Wednesday'),
+      S2Choice<int>(value: 4, title: 'Thursday'),
+      S2Choice<int>(value: 5, title: 'Friday'),
+      S2Choice<int>(value: 6, title: 'Saturday'),
     ];
 
     List<Map<String, String>> days = [
@@ -160,41 +220,90 @@ class SignUpContdView extends ConsumerWidget {
             ),
             ButtonBar(
               children: [
+                Spacer(),
                 ElevatedButton(onPressed: () {}, child: const Text("Cancel")),
                 ElevatedButton(
                     onPressed: () {
                       controller.showHrs.value = true;
                     },
                     child: const Text("Continue")),
+                Spacer()
               ],
             )
           ]))
-        : SmartSelect.multiple(
-            selectedValue: days_of_the_week,
-            onChange: (selected) {},
-            title: "select all hrs for availability",
-            choiceItems: S2Choice.listFrom(
-                source: hrs,
-                value: (index, Map<String, String> item) => item['value'],
-                title: (index, Map<String, String> item) => item['title']!),
-          ));
+        : dayTimePicker(context));
+  }
+
+  Widget dayTimePicker(BuildContext context) {
+    RxList<DaysWeek> dayTimeMapping = <DaysWeek>[].obs;
+    controller.selectedDays.forEach((element) {
+      dayTimeMapping.add(DaysWeek.values[element]);
+    });
+    return SingleChildScrollView(
+        child: Column(
+            children: dayTimeMapping.map((day) {
+      return ListTile(
+        title: Text(
+          describeEnum(day).capitalizeFirst!,
+        ),
+        subtitle: Obx(() {
+          return controller.dayTimeMapping2[day] == null
+              ? ListTile(
+                  title: const Text("Add New Time"),
+                  trailing: IconButton(
+                      onPressed: () async {
+                        TimeRange result = await showTimeRangePicker(
+                          context: context,
+                          interval: const Duration(minutes: 30),
+                        );
+                        controller.dayTimeMapping2[day] = DayTimeHelper(
+                            startTime: DateTime(0, 1, 1, result.startTime.hour,
+                                result.startTime.minute),
+                            endTime: DateTime(0, 1, 1, result.endTime.hour,
+                                result.endTime.minute));
+                      },
+                      icon: const Icon(Icons.add)),
+                )
+              : ListTile(
+                  title: Text(controller.dayTimeMapping2[day].toString()),
+                  trailing: IconButton(
+                      onPressed: () {
+                        controller.dayTimeMapping2.remove(day);
+                      },
+                      icon: const Icon(Icons.cancel)));
+        }),
+      );
+    }).toList())
+        // )
+        );
   }
 
   Widget images(BuildContext context) {
     return Obx(() {
       if (controller.selectedImageFiles.isEmpty) {
+        String text = controller_.asServiceProvider.value
+            ? 'Select Images'
+            : 'Select Profile Pic';
         return ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                minimumSize: Size(MediaQuery.of(context).size.width * 0.75, 60),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20))),
             onPressed: () async {
               final ImagePicker _picker = ImagePicker();
-              final List<XFile>? images = await _picker.pickMultiImage();
+              final List<XFile>? images = controller_.asServiceProvider.value
+                  ? await _picker.pickMultiImage()
+                  : List<XFile>.from(
+                      [await _picker.pickImage(source: ImageSource.gallery)]);
+
               images?.forEach((image) {
                 controller.selectedImageFiles.add(File(image.path));
               });
             },
-            child: const Text("select Images"));
+            child: Text(text));
       } else {
         return SizedBox(
-          width: MediaQuery.of(context).size.width * 0.2,
+          width: MediaQuery.of(context).size.width * 0.6,
           height: MediaQuery.of(context).size.height * 0.2,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -206,7 +315,7 @@ class SignUpContdView extends ConsumerWidget {
                   icon: const Icon(Icons.cancel)),
               ...controller.selectedImageFiles
                   .map((imagefile) => SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.2,
+                        width: MediaQuery.of(context).size.width * 0.6,
                         height: MediaQuery.of(context).size.height * 0.2,
                         child: Image.file(imagefile),
                       ))
@@ -227,22 +336,45 @@ class SignUpContdView extends ConsumerWidget {
     ];
     return Column(
       children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.7,
-          child: TextField(
-            onChanged: (newLocation) => controller.location.value = newLocation,
-            decoration: const InputDecoration(
-                hintText: "Enter Location", border: OutlineInputBorder()),
+        Padding(
+          padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: TextField(
+              onChanged: (cac) => controller.cac.value = cac,
+              decoration: InputDecoration(
+                  hintText: "Enter CAC",
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20))),
+            ),
           ),
         ),
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.7,
-          child: TextField(
-            onChanged: (newLocation) =>
-                controller.aboutBusiness.value = newLocation,
-            decoration: const InputDecoration(
-                hintText: "What's the businesss about?",
-                border: OutlineInputBorder()),
+        Padding(
+          padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: TextField(
+              onChanged: (newLocation) =>
+                  controller.location.value = newLocation,
+              decoration: InputDecoration(
+                  hintText: "Enter Location",
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20))),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: TextField(
+              onChanged: (newLocation) =>
+                  controller.aboutBusiness.value = newLocation,
+              decoration: InputDecoration(
+                  hintText: "What's the businesss about?",
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20))),
+            ),
           ),
         ),
         Obx(() => SmartSelect.single(
@@ -255,3 +387,5 @@ class SignUpContdView extends ConsumerWidget {
     );
   }
 }
+
+enum DaysWeek { sunday, monday, tuesday, wednesday, thursday, friday, saturday }

@@ -1,10 +1,12 @@
 // import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 // import 'package:amplify_authenticator/src/state/authenticator_state.dart';
 // import 'package:commerce/views/home.dart';
 // import 'package:commerce/views/signupview.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:social_login_buttons/social_login_buttons.dart';
 
 import '../controllers/signincontroller.dart';
 
@@ -23,23 +25,57 @@ class SignInView extends StatelessWidget {
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                SignInForm(),
+                ListTile(
+                  title: const Text(
+                    "Sign in",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  subtitle: Row(children: const [
+                    Text("To continue using"),
+                    FlutterLogo()
+                  ]),
+                ),
+                SignInForm.custom(
+                  fields: [
+                    SignInFormField.username(),
+                    SignInFormField.password(),
+                  ],
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      authenticatorState.changeStep(AuthenticatorStep.signIn);
+                    },
+                    child: const Text('Sign In')),
+                Obx(() => CheckboxListTile(
+                    title: const Text("As a service provider"),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: const EdgeInsets.only(left: 50, right: 50),
+                    value: controller.asServiceProvider.value,
+                    onChanged: (newValue) =>
+                        controller.asServiceProvider.value = newValue!)),
+                const Text('New user?'),
+                ElevatedButton(
+                    onPressed: () {
+                      authenticatorState.changeStep(AuthenticatorStep.signUp);
+                    },
+                    child: const Text('Create Account')),
+                Row(
+                  children: const [
+                    Expanded(child: Divider()),
+                    Text("or"),
+                    Expanded(child: Divider()),
+                  ],
+                ),
+                SocialLoginButton(
+                  buttonType: SocialLoginButtonType.google,
+                  onPressed: () async {
+                    var res = await Amplify.Auth.signInWithWebUI(
+                        provider: AuthProvider.facebook);
+                  },
+                ),
               ]),
         ),
       ),
-      persistentFooterButtons: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('New user?'),
-            TextButton(
-                onPressed: () {
-                  authenticatorState.changeStep(AuthenticatorStep.signUp);
-                },
-                child: const Text('Create Account'))
-          ],
-        )
-      ],
     );
   }
 }
@@ -72,13 +108,7 @@ class SignInView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20)))),
           ),
         ),
-        Obx(() => CheckboxListTile(
-            title: Text("As a service provider"),
-            controlAffinity: ListTileControlAffinity.leading,
-            contentPadding: EdgeInsets.only(left: 50, right: 50),
-            value: controller.asServiceProvider.value,
-            onChanged: (newValue) =>
-                controller.asServiceProvider.value = newValue!)),
+        
         ElevatedButton(onPressed: () async {
           controller.signIn();
           Future.delayed(Duration(seconds: 1), () {

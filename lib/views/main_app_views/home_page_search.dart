@@ -61,8 +61,10 @@ class SearchDashboard extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: GestureDetector(
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: ((context) => BusinessDetailsView())));
+            //TODO: FIX THIS, I HAVE IT UNDONE FOR NOW
+            // Navigator.of(context).push(MaterialPageRoute(
+            //     builder: ((context) =>
+            //         BusinessDetailsView(selectedBusiness: business))));
           },
           child: ListTile(
             title: Text(business.location!),

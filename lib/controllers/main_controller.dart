@@ -32,16 +32,18 @@ final FutureProvider<Map<String, dynamic>> newUserProvider =
   bool newuser = false;
   List<Users> users = [];
   AuthUser? authenticatedUser;
-  await ref.watch(loadUserProvider).when(
-      data: (data) async {
-        authenticatedUser = data;
-        users = await Amplify.DataStore.query(Users.classType,
-            where: Users.ID.eq(data.userId));
-        newuser = users.isEmpty;
-      },
-      error: (error, e) {},
-      loading: () {});
-  return {'newUser': newuser, 'authUser': authenticatedUser};
+  return ref.watch(loadUserProvider).when(data: (data) async {
+    authenticatedUser = data;
+    users = await Amplify.DataStore.query(Users.classType,
+        where: Users.ID.eq(data.userId));
+    newuser = users.isEmpty;
+    return {'newUser': newuser, 'authUser': authenticatedUser};
+  }, error: (error, e) {
+    return {};
+  }, loading: () {
+    return {};
+  });
+  print({'newUser': newuser, 'authUser': authenticatedUser});
 });
 
 final userSignedInProvider = FutureProvider((ref) async {
@@ -91,7 +93,7 @@ class MainController extends GetxController {
   loadUser() async {
     if (await userSignedIn() == true) {
       user = await Amplify.Auth.getCurrentUser();
-      print({'user is signed in: ', user!.userId});
+      print({'user is signed in: ', user.userId});
     } else {
       status.value = LoadingStatus.success;
     }

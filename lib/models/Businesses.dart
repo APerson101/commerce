@@ -34,8 +34,7 @@ class Businesses extends Model {
   final String? _about;
   final String? _cac;
   final List<int>? _AvailableDays;
-  final List<String>? _StarTimes;
-  final List<String>? _EndTimes;
+  final List<String>? _availableTimes;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -67,12 +66,8 @@ class Businesses extends Model {
     return _AvailableDays;
   }
   
-  List<String>? get StarTimes {
-    return _StarTimes;
-  }
-  
-  List<String>? get EndTimes {
-    return _EndTimes;
+  List<String>? get availableTimes {
+    return _availableTimes;
   }
   
   TemporalDateTime? get createdAt {
@@ -83,9 +78,9 @@ class Businesses extends Model {
     return _updatedAt;
   }
   
-  const Businesses._internal({required this.id, type, location, about, cac, AvailableDays, StarTimes, EndTimes, createdAt, updatedAt}): _type = type, _location = location, _about = about, _cac = cac, _AvailableDays = AvailableDays, _StarTimes = StarTimes, _EndTimes = EndTimes, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Businesses._internal({required this.id, type, location, about, cac, AvailableDays, availableTimes, createdAt, updatedAt}): _type = type, _location = location, _about = about, _cac = cac, _AvailableDays = AvailableDays, _availableTimes = availableTimes, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Businesses({String? id, String? type, String? location, String? about, String? cac, List<int>? AvailableDays, List<String>? StarTimes, List<String>? EndTimes}) {
+  factory Businesses({String? id, String? type, String? location, String? about, String? cac, List<int>? AvailableDays, List<String>? availableTimes}) {
     return Businesses._internal(
       id: id == null ? UUID.getUUID() : id,
       type: type,
@@ -93,8 +88,7 @@ class Businesses extends Model {
       about: about,
       cac: cac,
       AvailableDays: AvailableDays != null ? List<int>.unmodifiable(AvailableDays) : AvailableDays,
-      StarTimes: StarTimes != null ? List<String>.unmodifiable(StarTimes) : StarTimes,
-      EndTimes: EndTimes != null ? List<String>.unmodifiable(EndTimes) : EndTimes);
+      availableTimes: availableTimes != null ? List<String>.unmodifiable(availableTimes) : availableTimes);
   }
   
   bool equals(Object other) {
@@ -111,8 +105,7 @@ class Businesses extends Model {
       _about == other._about &&
       _cac == other._cac &&
       DeepCollectionEquality().equals(_AvailableDays, other._AvailableDays) &&
-      DeepCollectionEquality().equals(_StarTimes, other._StarTimes) &&
-      DeepCollectionEquality().equals(_EndTimes, other._EndTimes);
+      DeepCollectionEquality().equals(_availableTimes, other._availableTimes);
   }
   
   @override
@@ -129,8 +122,7 @@ class Businesses extends Model {
     buffer.write("about=" + "$_about" + ", ");
     buffer.write("cac=" + "$_cac" + ", ");
     buffer.write("AvailableDays=" + (_AvailableDays != null ? _AvailableDays!.toString() : "null") + ", ");
-    buffer.write("StarTimes=" + (_StarTimes != null ? _StarTimes!.toString() : "null") + ", ");
-    buffer.write("EndTimes=" + (_EndTimes != null ? _EndTimes!.toString() : "null") + ", ");
+    buffer.write("availableTimes=" + (_availableTimes != null ? _availableTimes!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -138,7 +130,7 @@ class Businesses extends Model {
     return buffer.toString();
   }
   
-  Businesses copyWith({String? id, String? type, String? location, String? about, String? cac, List<int>? AvailableDays, List<String>? StarTimes, List<String>? EndTimes}) {
+  Businesses copyWith({String? id, String? type, String? location, String? about, String? cac, List<int>? AvailableDays, List<String>? availableTimes}) {
     return Businesses._internal(
       id: id ?? this.id,
       type: type ?? this.type,
@@ -146,8 +138,7 @@ class Businesses extends Model {
       about: about ?? this.about,
       cac: cac ?? this.cac,
       AvailableDays: AvailableDays ?? this.AvailableDays,
-      StarTimes: StarTimes ?? this.StarTimes,
-      EndTimes: EndTimes ?? this.EndTimes);
+      availableTimes: availableTimes ?? this.availableTimes);
   }
   
   Businesses.fromJson(Map<String, dynamic> json)  
@@ -157,13 +148,12 @@ class Businesses extends Model {
       _about = json['about'],
       _cac = json['cac'],
       _AvailableDays = (json['AvailableDays'] as List?)?.map((e) => (e as num).toInt()).toList(),
-      _StarTimes = json['StarTimes']?.cast<String>(),
-      _EndTimes = json['EndTimes']?.cast<String>(),
+      _availableTimes = json['availableTimes']?.cast<String>(),
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'type': _type, 'location': _location, 'about': _about, 'cac': _cac, 'AvailableDays': _AvailableDays, 'StarTimes': _StarTimes, 'EndTimes': _EndTimes, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'type': _type, 'location': _location, 'about': _about, 'cac': _cac, 'AvailableDays': _AvailableDays, 'availableTimes': _availableTimes, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "businesses.id");
@@ -172,8 +162,7 @@ class Businesses extends Model {
   static final QueryField ABOUT = QueryField(fieldName: "about");
   static final QueryField CAC = QueryField(fieldName: "cac");
   static final QueryField AVAILABLEDAYS = QueryField(fieldName: "AvailableDays");
-  static final QueryField STARTIMES = QueryField(fieldName: "StarTimes");
-  static final QueryField ENDTIMES = QueryField(fieldName: "EndTimes");
+  static final QueryField AVAILABLETIMES = QueryField(fieldName: "availableTimes");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Businesses";
     modelSchemaDefinition.pluralName = "Businesses";
@@ -223,14 +212,7 @@ class Businesses extends Model {
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Businesses.STARTIMES,
-      isRequired: false,
-      isArray: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.collection, ofModelName: describeEnum(ModelFieldTypeEnum.string))
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Businesses.ENDTIMES,
+      key: Businesses.AVAILABLETIMES,
       isRequired: false,
       isArray: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.collection, ofModelName: describeEnum(ModelFieldTypeEnum.string))
