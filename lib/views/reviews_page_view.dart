@@ -2,22 +2,13 @@ import 'package:commerce/models/Reviews.dart';
 import 'package:flutter/material.dart';
 
 class ReviewsPageView extends StatelessWidget {
-  ReviewsPageView({Key? key, required this.reviews}) : super(key: key);
-  List<Reviews> reviews;
+  const ReviewsPageView({Key? key, required this.reviews}) : super(key: key);
+  final List<Reviews> reviews;
 
   @override
   Widget build(BuildContext context) {
     int total_reviews = reviews.length;
-    int total_one_star =
-        reviews.where((review) => review.stars == 1).toList().length;
-    int total_two_star =
-        reviews.where((review) => review.stars == 2).toList().length;
-    int total_three_star =
-        reviews.where((review) => review.stars == 3).toList().length;
-    int total_four_star =
-        reviews.where((review) => review.stars == 4).toList().length;
-    int total_five_star =
-        reviews.where((review) => review.stars == 5).toList().length;
+
     int total_stars = 0;
     reviews.forEach((review) => total_stars += review.stars!);
     double avg = (total_stars / (total_reviews * 5));

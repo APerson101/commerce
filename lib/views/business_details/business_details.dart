@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:commerce/views/business_details/business_details_controller.dart';
 import 'package:commerce/views/services_page.dart';
 import 'package:flutter/material.dart';
@@ -42,9 +43,14 @@ class BusinessDetailsView extends ConsumerWidget {
                       StretchMode.fadeTitle,
                     ],
                     background: Column(children: [
-                      Image.network(data.images[0],
-                          height: MediaQuery.of(context).size.height * 0.3,
-                          fit: BoxFit.fill),
+                      CarouselSlider(
+                          items: data.images
+                              .map((link) => Image.network(link,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.3,
+                                  fit: BoxFit.fill))
+                              .toList(),
+                          options: CarouselOptions()),
                       Padding(
                         padding: const EdgeInsets.only(left: 24.0, right: 24),
                         child: Row(children: [

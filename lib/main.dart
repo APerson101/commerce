@@ -6,6 +6,8 @@ import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:commerce/controllers/signupcontroller.dart';
+import 'package:commerce/views/main_app_views/bookings_view.dart';
+import 'package:commerce/views/main_app_views/dashboard_view.dart';
 import 'package:commerce/views/main_app_views/profile_view.dart';
 import 'package:commerce/views/main_app_views/search_view.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -51,7 +53,7 @@ void main() async {
   //     child: GetMaterialApp(
   //   home: ProfileView(),
   // )));
-  runApp(ProviderScope(child: GetMaterialApp(home: ProfileView())));
+  runApp(ProviderScope(child: GetMaterialApp(home: DashboardView())));
 }
 
 final getV = FutureProvider((ref) async {

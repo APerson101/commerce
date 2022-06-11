@@ -1,8 +1,68 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:commerce/models/ModelProvider.dart';
+import 'package:commerce/views/business_details/business_details_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:riverpod/riverpod.dart';
 import 'package:uuid/uuid.dart';
+
+final userbookingsProvider =
+    FutureProvider.family<List<BookingMade>, String>((ref, userID) async {
+  return Future.delayed(const Duration(seconds: 1), () {
+    return [
+      BookingMade(
+          booking: Bookings(
+            id: '8867',
+            user: 'user',
+            business: '54321',
+            dateTime: TemporalDateTime.now(),
+            done: true,
+            reservation: '26-09-2022, 09:00AM - 10:00AM',
+          ),
+          businessName: 'Fads Spoon'),
+      BookingMade(
+          booking: Bookings(
+            id: '8867',
+            user: 'user',
+            business: '54321',
+            dateTime: TemporalDateTime.now(),
+            done: false,
+            reservation: '26-09-2022, 09:00AM - 10:00AM',
+          ),
+          businessName: 'Fads Spoon'),
+      BookingMade(
+          booking: Bookings(
+            id: '8867',
+            user: 'user',
+            business: '54321',
+            dateTime: TemporalDateTime.now(),
+            done: true,
+            reservation: '26-09-2022, 09:00AM - 10:00AM',
+          ),
+          businessName: 'Fads Spoon'),
+      BookingMade(
+          booking: Bookings(
+            id: '8867',
+            user: 'user',
+            business: '54321',
+            dateTime: TemporalDateTime.now(),
+            done: false,
+            reservation: '26-09-2022, 09:00AM - 10:00AM',
+          ),
+          businessName: 'Fads Spoon'),
+      BookingMade(
+          booking: Bookings(
+            id: '8867',
+            user: 'user',
+            business: '54321',
+            dateTime: TemporalDateTime.now(),
+            done: true,
+            reservation: '26-09-2022, 09:00AM - 10:00AM',
+          ),
+          businessName: 'Fads Spoon'),
+    ];
+  });
+});
 
 class BookingsController extends GetxController {
   RxList<ListTile> companyBookings = <ListTile>[].obs;
@@ -134,4 +194,13 @@ class BookingsController extends GetxController {
         businessID: businessID,
         stars: starsRating.value));
   }
+
+  cancelBooking(String bookingID) {}
+}
+
+class BookingMade {
+  Bookings booking;
+  String businessName;
+
+  BookingMade({required this.booking, required this.businessName});
 }
