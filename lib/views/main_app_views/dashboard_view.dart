@@ -15,7 +15,7 @@ class DashboardView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return test();
+    // return test();
     return ref.watch(imagesProvider).when(
         data: (data) => displaydata(data, context),
         error: error,
@@ -282,7 +282,7 @@ class DashboardView extends ConsumerWidget {
                               ),
                               child: Padding(
                                 padding: EdgeInsets.only(
-                                    left: 90.0,
+                                    left: 65.0,
                                     right: 25.0,
                                     top: 25.0,
                                     bottom: 25.0),
@@ -321,7 +321,10 @@ class DashboardView extends ConsumerWidget {
                   height: MediaQuery.of(context).size.height * 0.3,
                   child: Padding(
                     padding: const EdgeInsets.all(1.0),
-                    child: Image.network(category.imageLinks[0]!),
+                    child: Image.network(
+                      category.imageLinks[0]!,
+                      fit: BoxFit.fill,
+                    ),
                   )),
               Column(
                 children: [
@@ -331,7 +334,7 @@ class DashboardView extends ConsumerWidget {
                       height: MediaQuery.of(context).size.height * 0.15,
                       child: Padding(
                         padding: const EdgeInsets.all(1.0),
-                        child: Image.network(e!),
+                        child: Image.network(e!, fit: BoxFit.fill),
                       )))
                 ],
               )
@@ -345,7 +348,8 @@ class DashboardView extends ConsumerWidget {
                     child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.3,
                         height: MediaQuery.of(context).size.height * 0.3,
-                        child: Image.network(category.imageLinks[0]!)),
+                        child: Image.network(category.imageLinks[0]!,
+                            fit: BoxFit.fill)),
                   )
                 : SizedBox(
                     width: MediaQuery.of(context).size.width * 0.3,
