@@ -1,7 +1,33 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:commerce/models/ModelProvider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
+
+import 'package:commerce/models/ModelProvider.dart';
+import 'package:riverpod/riverpod.dart';
+
+final imagesProvider = FutureProvider((ref) async {
+  return await Future.delayed(Duration(seconds: 1), () {
+    List<Categories> allCategories = [];
+    List<String> cats = <String>[];
+    cats.addAll(
+        {"Barbing salon", "Hair Salon", "Nail Salon", "Driving School"});
+    cats.forEach((category) async {
+      FirebaseStorage _storage = FirebaseStorage.instance;
+      var listOfResultCategories =
+          await _storage.ref('Businesses/$category').listAll();
+      List<Reference> allBusinesses = listOfResultCategories.items;
+      List<String?> imagesData = [];
+
+      allBusinesses.forEach((all) async {
+        String? data = await all.getDownloadURL();
+        var metadata = await all.getMetadata();
+        imagesData.add(data);
+      });
+      allCategories.add(Categories(category: category, imageLinks: imagesData));
+    });
+    return allCategories;
+  });
+});
 
 class DashBoardController extends GetxController {
   RxList<List<String?>> allItems = <List<String?>>[].obs;
@@ -10,31 +36,6 @@ class DashBoardController extends GetxController {
   RxList<Businesses> searchResultBusinesses = <Businesses>[].obs;
   RxList<Users> searchResultNames = <Users>[].obs;
   Rx<searchstatus> currentSearchStatus = searchstatus.idle.obs;
-  Future<List<List<String?>>> loadAllImages() async {
-    String barbers = 'Businesses/Barbing salon';
-    String salons = 'Businesses/Hair Salon';
-    String nails = 'Businesses/Nail Salon';
-    String driving = 'Businesses/Driving School';
-    List<String> allReferences = [];
-    List<List<String?>> allItems = [];
-    allReferences.add(barbers);
-    allReferences.add(salons);
-    allReferences.add(nails);
-    allReferences.add(driving);
-    FirebaseStorage _storage = FirebaseStorage.instance;
-    allReferences.forEach((eahc) async {
-      var list_of_result_categories = await _storage.ref(eahc).listAll();
-      List<Reference> all_businesses = list_of_result_categories.items;
-      all_businesses.forEach((all) async {
-        String? data = await all.getDownloadURL();
-        var metadata = await _storage.ref().getMetadata();
-        List<String?> imagesData = [];
-        imagesData.add(data);
-        this.allItems.add(imagesData);
-      });
-    });
-    return allItems;
-  }
 
   Future<bool> search() async {
     currentSearchStatus.value = searchstatus.searching;
@@ -54,3 +55,12 @@ class DashBoardController extends GetxController {
 }
 
 enum searchstatus { searching, done, error, idle }
+
+class Categories {
+  String category;
+  List<String?> imageLinks;
+  Categories({
+    required this.category,
+    required this.imageLinks,
+  });
+}
