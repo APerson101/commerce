@@ -129,7 +129,7 @@ class DashboardView extends ConsumerWidget {
                   carryOutMenuAction(selected),
               icon: const Icon(Icons.menu),
               itemBuilder: (BuildContext context) {
-                return ['Log out', 'Switch theme']
+                return ['Log out']
                     .map((item) => PopupMenuItem(
                           child: Text(item),
                           value: item,
@@ -137,7 +137,11 @@ class DashboardView extends ConsumerWidget {
                     .toList();
               },
             ),
-            title: const FlutterLogo(size: 36),
+            title: Image.asset(
+              'images/logo.jpeg',
+              width: 70,
+              height: 50,
+            ),
             trailing:
                 IconButton(onPressed: () {}, icon: const Icon(Icons.inbox)),
           ),
@@ -152,10 +156,6 @@ class DashboardView extends ConsumerWidget {
       case 'Log out':
         logOut();
         break;
-      case 'Switch theme':
-        switchTheme();
-        break;
-      default:
     }
   }
 
@@ -182,11 +182,44 @@ class DashboardView extends ConsumerWidget {
                     height: 150,
                     color: Colors.red[900],
                     child: Column(
-                      children: const [
-                        Text("Find"),
-                        Text("Places Around"),
-                        Divider(),
-                        Text("Find new places below:")
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(
+                              left: 50, right: 8.0, top: 8, bottom: 8),
+                          child: Text("Find",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22,
+                                  color: Colors.white)),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(
+                              left: 50, right: 8.0, top: 8, bottom: 8),
+                          child: Text("Places Around",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22,
+                                  color: Colors.white)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 50),
+                          child: Divider(
+                              color: Colors.white,
+                              thickness: 2,
+                              endIndent:
+                                  MediaQuery.of(context).size.width * 0.7),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(
+                              left: 50, right: 8.0, top: 8, bottom: 8),
+                          child: Text("Find new places below:",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 14,
+                                  color: Colors.white)),
+                        )
                       ],
                     ),
                   ),
@@ -201,18 +234,26 @@ class DashboardView extends ConsumerWidget {
                             controller.searchText.value = searchText,
                         decoration: InputDecoration(
                           hintText: "Search for places...",
+                          filled: true,
+                          fillColor: Colors.white,
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10)),
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.search),
-                            onPressed: () async {
-                              await controller.search();
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SearchDashboard()));
-                            },
-                          ),
+                          suffixIcon: Card(
+                              color: Colors.red[900],
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: IconButton(
+                                  icon: const Icon(Icons.search),
+                                  onPressed: () async {
+                                    await controller.search();
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SearchDashboard()));
+                                  },
+                                ),
+                              )),
                         ),
                       ),
                     ))
@@ -220,12 +261,25 @@ class DashboardView extends ConsumerWidget {
             ),
           ),
           ListTile(
-              title: Row(
-                children: const [
-                  Text("Get Inspired"),
-                  Spacer(),
-                  Text("See all Offers")
-                ],
+              onTap: () async {
+                //
+              },
+              title: Padding(
+                padding: const EdgeInsets.only(left: 20, right: 8.0),
+                child: Row(
+                  children: [
+                    const Text("Get Inspired",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    const Spacer(),
+                    Row(children: const [
+                      Text("See all Offers",
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w300)),
+                      Icon(Icons.chevron_right_outlined)
+                    ]),
+                  ],
+                ),
               ),
               subtitle: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -233,18 +287,6 @@ class DashboardView extends ConsumerWidget {
                   ...carousalItem(data, context),
                 ]),
               )),
-          // ListTile(
-          //   title: const Text("Special Offers"),
-          //   subtitle: SingleChildScrollView(
-          //       scrollDirection: Axis.horizontal,
-          //       child: Row(
-          //         children: [
-          //           specialOffers(),
-          //           specialOffers(),
-          //           specialOffers(),
-          //         ],
-          //       )),
-          // ),
         ],
       ),
     );
@@ -316,26 +358,33 @@ class DashboardView extends ConsumerWidget {
         ? Row(
             children: [
               // Image 1,
-              SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.3,
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  child: Padding(
-                    padding: const EdgeInsets.all(1.0),
-                    child: Image.network(
+              Container(
+                height: MediaQuery.of(context).size.height * .3,
+                width: MediaQuery.of(context).size.width * .18,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.fill,
+                    image: NetworkImage(
                       category.imageLinks[0]!,
-                      fit: BoxFit.fill,
                     ),
-                  )),
+                  ),
+                ),
+              ),
               Column(
                 children: [
                   // image 2 and 3
-                  ...category.imageLinks.sublist(1, 3).map((e) => SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.15,
-                      height: MediaQuery.of(context).size.height * 0.15,
-                      child: Padding(
-                        padding: const EdgeInsets.all(1.0),
-                        child: Image.network(e!, fit: BoxFit.fill),
-                      )))
+                  ...category.imageLinks.sublist(1, 3).map((e) => Container(
+                        height: MediaQuery.of(context).size.height * .15,
+                        width: MediaQuery.of(context).size.width * .12,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image: NetworkImage(
+                              e!,
+                            ),
+                          ),
+                        ),
+                      ))
                 ],
               )
             ],
@@ -345,10 +394,10 @@ class DashboardView extends ConsumerWidget {
             : category.imageLinks.length == 1
                 ? Padding(
                     padding: const EdgeInsets.all(1.0),
-                    child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        height: MediaQuery.of(context).size.height * 0.3,
+                    child: FittedBox(
                         child: Image.network(category.imageLinks[0]!,
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            height: MediaQuery.of(context).size.height * 0.3,
                             fit: BoxFit.fill)),
                   )
                 : SizedBox(
@@ -360,11 +409,15 @@ class DashboardView extends ConsumerWidget {
   Widget _twoImages(List<String?> imagesURL, BuildContext context) {
     return Column(children: [
       ...imagesURL
-          .map((src) => Image.network(
-                src!,
-                width: MediaQuery.of(context).size.width * .3,
+          .map((src) => Container(
                 height: MediaQuery.of(context).size.height * .15,
-                fit: BoxFit.contain,
+                width: MediaQuery.of(context).size.width * .3,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.fill,
+                    image: NetworkImage(src!),
+                  ),
+                ),
               ))
           .toList()
     ]);

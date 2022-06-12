@@ -48,54 +48,30 @@ void main() async {
     }
   }
 
-  // await initApp();
-  // runApp(ProviderScope(
-  //     child: GetMaterialApp(
-  //   home: ProfileView(),
-  // )));
+  await initApp();
   runApp(ProviderScope(child: GetMaterialApp(home: DashboardView())));
 }
-
-final getV = FutureProvider((ref) async {
-  await Future.delayed(const Duration(seconds: 3));
-  return true;
-});
 
 class MyApp extends ConsumerWidget {
   MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(getV).when(data: (bool data) {
-      if (data) {
-        return Authenticator(
-            authenticatorBuilder:
-                (BuildContext context, AuthenticatorState state) {
-              switch (state.currentStep) {
-                case AuthenticatorStep.signIn:
-                  return SignInView(authenticatorState: state);
-                case AuthenticatorStep.loading:
-                  return const Scaffold(
-                      body:
-                          Center(child: CircularProgressIndicator.adaptive()));
-                case AuthenticatorStep.signUp:
-                  return SignupFirstView(authenticatorState: state);
-                default:
-                  return null;
-              }
-            },
-            child: const MainLoader());
-      }
-      return Container();
-    }, error: (Object error, StackTrace? stackTrace) {
-      return const Scaffold(
-          body: Center(child: Text("Omo, this Error Choke!!")));
-    }, loading: () {
-      return const Scaffold(
-          body: Center(
-        child: CircularProgressIndicator.adaptive(),
-      ));
-    });
+    return Authenticator(
+        authenticatorBuilder: (BuildContext context, AuthenticatorState state) {
+          switch (state.currentStep) {
+            case AuthenticatorStep.signIn:
+              return SignInView(authenticatorState: state);
+            case AuthenticatorStep.loading:
+              return const Scaffold(
+                  body: Center(child: CircularProgressIndicator.adaptive()));
+            case AuthenticatorStep.signUp:
+              return SignupFirstView(authenticatorState: state);
+            default:
+              return null;
+          }
+        },
+        child: const MainLoader());
   }
 }
 

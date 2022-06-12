@@ -32,7 +32,7 @@ final FutureProvider<Map<String, dynamic>> newUserProvider =
   bool newuser = false;
   List<Users> users = [];
   AuthUser? authenticatedUser;
-  return ref.watch(loadUserProvider).when(data: (data) async {
+  return await ref.watch(loadUserProvider).when(data: (data) async {
     authenticatedUser = data;
     users = await Amplify.DataStore.query(Users.classType,
         where: Users.ID.eq(data.userId));

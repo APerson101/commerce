@@ -152,14 +152,36 @@ class SearchView extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    OutlinedButton(onPressed: () {}, child: Text('All')),
-                    OutlinedButton(onPressed: () {}, child: Text('Barbershop')),
-                    OutlinedButton(onPressed: () {}, child: Text('Hair salon')),
-                    OutlinedButton(onPressed: () {}, child: Text('Nail Salon')),
                     OutlinedButton(
-                        onPressed: () {}, child: const Text('driving school')),
+                        onPressed: () {
+                          controller.filter.value = Searchfilters.all;
+                        },
+                        child: Text('All')),
                     OutlinedButton(
-                        onPressed: () {}, child: const Text('cooking school')),
+                        onPressed: () {
+                          controller.filter.value = Searchfilters.barber;
+                        },
+                        child: Text('Barbershop')),
+                    OutlinedButton(
+                        onPressed: () {
+                          controller.filter.value = Searchfilters.hairsalon;
+                        },
+                        child: Text('Hair salon')),
+                    OutlinedButton(
+                        onPressed: () {
+                          controller.filter.value = Searchfilters.nailsalon;
+                        },
+                        child: Text('Nail Salon')),
+                    OutlinedButton(
+                        onPressed: () {
+                          controller.filter.value = Searchfilters.driving;
+                        },
+                        child: const Text('driving school')),
+                    OutlinedButton(
+                        onPressed: () {
+                          controller.filter.value = Searchfilters.cooking;
+                        },
+                        child: const Text('cooking school')),
                   ],
                 )),
           ),
@@ -188,16 +210,97 @@ class SearchView extends StatelessWidget {
   Widget displaySearchResults(context) {
     SearchResult businesses = controller.searchResult.value;
     return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: businessesChildren(
-            businesses.businesses, businesses.searchResult, context),
-      ),
+      child: getChild(businesses.businesses, businesses.searchResult, context),
     );
   }
 
-  List<Card> businessesChildren(
+  getChild(
+      List<Businesses> businesses, List<Users> users, BuildContext context) {
+    return Obx(() {
+      List<Card> children = [];
+      switch (controller.filter.value) {
+        case Searchfilters.all:
+          children = filteredResult(businesses, users, context);
+          break;
+        case Searchfilters.barber:
+          var tempBus = businesses.where((element) => element.type == 'barber');
+          List<Users> tempUsers = [];
+          users.forEach((element) {
+            for (var temp in tempBus) {
+              if (temp.id == element.id) {
+                tempUsers.add(element);
+                break;
+              }
+            }
+          });
+          children = filteredResult(tempBus.toList(), tempUsers, context);
+          break;
+        case Searchfilters.hairsalon:
+          var tempBus =
+              businesses.where((element) => element.type == 'Hair Salon');
+          List<Users> tempUsers = [];
+          users.forEach((element) {
+            for (var temp in tempBus) {
+              if (temp.id == element.id) {
+                tempUsers.add(element);
+                break;
+              }
+            }
+          });
+          children = filteredResult(tempBus.toList(), tempUsers, context);
+          break;
+        case Searchfilters.nailsalon:
+          var tempBus =
+              businesses.where((element) => element.type == 'Nail Salon');
+          List<Users> tempUsers = [];
+          users.forEach((element) {
+            for (var temp in tempBus) {
+              if (temp.id == element.id) {
+                tempUsers.add(element);
+                break;
+              }
+            }
+          });
+          children = filteredResult(tempBus.toList(), tempUsers, context);
+          break;
+        case Searchfilters.driving:
+          var tempBus =
+              businesses.where((element) => element.type == 'driving');
+          List<Users> tempUsers = [];
+          users.forEach((element) {
+            for (var temp in tempBus) {
+              if (temp.id == element.id) {
+                tempUsers.add(element);
+                break;
+              }
+            }
+          });
+          children = filteredResult(tempBus.toList(), tempUsers, context);
+          break;
+        case Searchfilters.cooking:
+          var tempBus =
+              businesses.where((element) => element.type == 'cooking');
+          List<Users> tempUsers = [];
+          users.forEach((element) {
+            for (var temp in tempBus) {
+              if (temp.id == element.id) {
+                tempUsers.add(element);
+                break;
+              }
+            }
+          });
+          children = filteredResult(tempBus.toList(), tempUsers, context);
+          break;
+      }
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: children,
+      );
+    });
+  }
+
+  List<Card> filteredResult(
       List<Businesses> businesses, List<Users> users, BuildContext context) {
     return businesses.map((business) {
       return Card(

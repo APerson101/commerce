@@ -4,10 +4,13 @@ import 'package:commerce/models/ModelProvider.dart';
 
 enum CurrentSearchState { idle, searching, none, error, done }
 
+enum Searchfilters { all, barber, hairsalon, nailsalon, driving, cooking }
+
 class SearchController extends GetxController {
   Rx<CurrentSearchState> currentState = CurrentSearchState.idle.obs;
   RxString searchPhrase = ''.obs;
   RxInt searchperiod = 300.obs;
+  Rx<Searchfilters> filter = Searchfilters.all.obs;
   RxString locationToBeSearched = ''.obs;
   Rx<SearchResult> searchResult =
       SearchResult(searchResult: [], businesses: []).obs;
