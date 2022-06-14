@@ -1,4 +1,5 @@
 import 'package:commerce/controllers/main_controller.dart';
+import 'package:commerce/splashscreen.dart';
 import 'package:commerce/views/main_controllers/bookings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -155,8 +156,6 @@ class BookingsView extends ConsumerWidget {
   }
 
   Widget loading() {
-    return const Center(
-      child: CircularProgressIndicator.adaptive(),
-    );
+    return SplashScreen();
   }
 }

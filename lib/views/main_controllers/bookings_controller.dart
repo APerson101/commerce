@@ -114,9 +114,9 @@ class BookingsController extends GetxController {
   Future<List<String>> _getNames(List<Bookings> all) async {
     List<String> names = [];
     all.forEach((booking) async {
-      var list = await getUserNameFromID(booking.user!);
+      var list = await getUserNameFromID(booking.user);
       var name = list[0];
-      names.add(name.name!);
+      names.add(name.name);
     });
     return names;
   }

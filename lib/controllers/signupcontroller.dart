@@ -33,7 +33,7 @@ class SignUpController extends GetxController {
   RxString phonenumber = ''.obs;
   RxInt selectedBusinessType = 0.obs;
   RxList<int> selectedDays = <int>[].obs;
-
+  RxBool asServiceProvider = false.obs;
   RxString countryTextToDisplay = 'select country'.obs;
 
   RxString fullname = "".obs;
@@ -45,7 +45,6 @@ class SignUpController extends GetxController {
   RxString enteredpassword = ''.obs;
   RxString name = "Full Name".obs;
 
-  RxBool asServiceProvider = false.obs;
   RxBool showHrs = false.obs;
   RxList<File> selectedImageFiles = <File>[].obs;
   RxMap<DaysWeek, DayTimeHelper> dayTimeMapping2 =
@@ -54,21 +53,12 @@ class SignUpController extends GetxController {
   RxString cac = ''.obs;
   RxString aboutBusiness = ''.obs;
 
-  Future signUp(String userId) async {
+  Future signUp(String userId, bool serviceprovider) async {
     currentState.value = signUpStates.loading;
     //save to db
-    List<String> imagePaths = [];
-    'Users/$userId';
-    await Amplify.DataStore.save<Users>(Users(
-      name: fullname.value,
-      id: userId,
-      number: phonenumber.value,
-      country: selectedCountry.value,
-      cac: cac.value,
-      pics: imagePaths,
-      isBusiness: asServiceProvider.value,
-    ));
-    if (asServiceProvider.value) {
+    print({'USER ID IS : ', userId});
+
+    if (serviceprovider) {
       var businesses = [
         'Hair Salon',
         'Barbing Salon',
@@ -81,6 +71,7 @@ class SignUpController extends GetxController {
           type: selectedBusiness,
           location: location.value,
           about: aboutBusiness.value,
+          cac: cac.value,
           AvailableDays: selectedDays,
           availableTimes:
               dayTimeMapping2.values.map((e) => e.toString()).toList()));
@@ -88,15 +79,33 @@ class SignUpController extends GetxController {
       FirebaseStorage instance = FirebaseStorage.instance;
 
       for (var i = 0; i < selectedImageFiles.length; i++) {
-        instance.ref('Businesses/$selectedBusiness').putData(
-            selectedImageFiles[i].readAsBytesSync(),
-            SettableMetadata(
-              customMetadata: {
-                'userID': userId,
-                'category': selectedBusiness,
-              },
-            ));
+        await instance
+            .ref('Businesses/$selectedBusiness')
+            .child('image $userId $i.png')
+            .putData(
+                selectedImageFiles[i].readAsBytesSync(),
+                SettableMetadata(
+                  customMetadata: {
+                    'userID': userId,
+                    'category': selectedBusiness,
+                  },
+                ));
       }
+    } else {
+      FirebaseStorage instance = FirebaseStorage.instance;
+      var res = await instance.ref('Users').child('image $userId.png').putData(
+          selectedImageFiles.first.readAsBytesSync(),
+          SettableMetadata(customMetadata: {'userID': userId}));
+      String url = await res.ref.getDownloadURL();
+      await Amplify.DataStore.save<Users>(Users(
+        name: fullname.value,
+        id: userId,
+        number: phonenumber.value,
+        country: selectedCountry.value,
+        cac: cac.value,
+        pics: [url],
+        isBusiness: serviceprovider,
+      ));
     }
     currentState.value = signUpStates.success;
   }

@@ -6,7 +6,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 // import 'package:commerce/views/signupview.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:social_login_buttons/social_login_buttons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../controllers/signincontroller.dart';
 
@@ -25,15 +25,23 @@ class SignInView extends StatelessWidget {
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                const SizedBox(height: 10),
                 ListTile(
-                  title: const Text(
+                  title: const Center(
+                      child: Text(
                     "Sign in",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                  subtitle: Row(children: const [
-                    Text("To continue using"),
-                    FlutterLogo()
-                  ]),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                  )),
+                  subtitle: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("To continue using",
+                            style: TextStyle(
+                              fontSize: 22,
+                            )),
+                        Image.asset('assets/images/logo.jpeg',
+                            width: 100, height: 100)
+                      ]),
                 ),
                 SignInForm.custom(
                   fields: [
@@ -41,38 +49,62 @@ class SignInView extends StatelessWidget {
                     SignInFormField.password(),
                   ],
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                      authenticatorState.changeStep(AuthenticatorStep.signIn);
-                    },
-                    child: const Text('Sign In')),
+                // ElevatedButton(
+                //     onPressed: () {
+                //       authenticatorState.changeStep(AuthenticatorStep.signIn);
+                //     },
+                //     child: const Text('Sign In')),
+                const SizedBox(
+                  height: 20,
+                ),
+
                 Obx(() => CheckboxListTile(
                     title: const Text("As a service provider"),
                     controlAffinity: ListTileControlAffinity.leading,
                     contentPadding: const EdgeInsets.only(left: 50, right: 50),
                     value: controller.asServiceProvider.value,
-                    onChanged: (newValue) =>
-                        controller.asServiceProvider.value = newValue!)),
+                    onChanged: (newValue) async {
+                      controller.asServiceProvider.value = newValue!;
+                      SharedPreferences pref =
+                          await SharedPreferences.getInstance();
+                      pref.setBool(
+                          'isBusiness', controller.asServiceProvider.value);
+                    })),
+                const SizedBox(
+                  height: 25,
+                ),
+
                 const Text('New user?'),
+                const SizedBox(
+                  height: 15,
+                ),
+
+                const SizedBox(
+                  height: 25,
+                ),
                 ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       authenticatorState.changeStep(AuthenticatorStep.signUp);
                     },
+                    style: ElevatedButton.styleFrom(
+                        primary: Colors.red,
+                        minimumSize:
+                            Size(MediaQuery.of(context).size.width * 0.8, 45)),
                     child: const Text('Create Account')),
-                Row(
-                  children: const [
-                    Expanded(child: Divider()),
-                    Text("or"),
-                    Expanded(child: Divider()),
-                  ],
-                ),
-                SocialLoginButton(
-                  buttonType: SocialLoginButtonType.google,
-                  onPressed: () async {
-                    var res = await Amplify.Auth.signInWithWebUI(
-                        provider: AuthProvider.facebook);
-                  },
-                ),
+                // Row(
+                //   children: const [
+                //     Expanded(child: Divider()),
+                //     Text("or"),
+                //     Expanded(child: Divider()),
+                //   ],
+                // ),
+                // SocialLoginButton(
+                //   buttonType: SocialLoginButtonType.google,
+                //   onPressed: () async {
+                //     var res = await Amplify.Auth.signInWithWebUI(
+                //         provider: AuthProvider.facebook);
+                //   },
+                // ),
               ]),
         ),
       ),

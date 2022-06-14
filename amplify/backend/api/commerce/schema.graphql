@@ -1,3 +1,14 @@
+type Users @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  isBusiness: Boolean!
+  cac: String
+  pics: [String!]!
+  number: String
+  country: String
+  bank: String
+}
+
 type Businesses @model @auth(rules: [{allow: public}]) {
   id: ID!
   type: String
@@ -14,17 +25,6 @@ type Reviews @model @auth(rules: [{allow: public}]) {
   businessID: ID
   comment: String
   stars: Int
-}
-
-type Users @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  name: String
-  bank: String
-  isBusiness: Boolean
-  country: String
-  number: String
-  cac: String
-  pics: [String!]!
 }
 
 type Bookings @model @auth(rules: [{allow: public}]) {

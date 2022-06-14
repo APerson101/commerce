@@ -30,12 +30,12 @@ class Users extends Model {
   static const classType = const _UsersModelType();
   final String id;
   final String? _name;
-  final String? _bank;
   final bool? _isBusiness;
-  final String? _country;
-  final String? _number;
   final String? _cac;
   final List<String>? _pics;
+  final String? _number;
+  final String? _country;
+  final String? _bank;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -47,24 +47,30 @@ class Users extends Model {
     return id;
   }
   
-  String? get name {
-    return _name;
+  String get name {
+    try {
+      return _name!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
-  String? get bank {
-    return _bank;
-  }
-  
-  bool? get isBusiness {
-    return _isBusiness;
-  }
-  
-  String? get country {
-    return _country;
-  }
-  
-  String? get number {
-    return _number;
+  bool get isBusiness {
+    try {
+      return _isBusiness!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
   String? get cac {
@@ -84,6 +90,18 @@ class Users extends Model {
     }
   }
   
+  String? get number {
+    return _number;
+  }
+  
+  String? get country {
+    return _country;
+  }
+  
+  String? get bank {
+    return _bank;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -92,18 +110,18 @@ class Users extends Model {
     return _updatedAt;
   }
   
-  const Users._internal({required this.id, name, bank, isBusiness, country, number, cac, required pics, createdAt, updatedAt}): _name = name, _bank = bank, _isBusiness = isBusiness, _country = country, _number = number, _cac = cac, _pics = pics, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Users._internal({required this.id, required name, required isBusiness, cac, required pics, number, country, bank, createdAt, updatedAt}): _name = name, _isBusiness = isBusiness, _cac = cac, _pics = pics, _number = number, _country = country, _bank = bank, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Users({String? id, String? name, String? bank, bool? isBusiness, String? country, String? number, String? cac, required List<String> pics}) {
+  factory Users({String? id, required String name, required bool isBusiness, String? cac, required List<String> pics, String? number, String? country, String? bank}) {
     return Users._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
-      bank: bank,
       isBusiness: isBusiness,
-      country: country,
-      number: number,
       cac: cac,
-      pics: pics != null ? List<String>.unmodifiable(pics) : pics);
+      pics: pics != null ? List<String>.unmodifiable(pics) : pics,
+      number: number,
+      country: country,
+      bank: bank);
   }
   
   bool equals(Object other) {
@@ -116,12 +134,12 @@ class Users extends Model {
     return other is Users &&
       id == other.id &&
       _name == other._name &&
-      _bank == other._bank &&
       _isBusiness == other._isBusiness &&
-      _country == other._country &&
-      _number == other._number &&
       _cac == other._cac &&
-      DeepCollectionEquality().equals(_pics, other._pics);
+      DeepCollectionEquality().equals(_pics, other._pics) &&
+      _number == other._number &&
+      _country == other._country &&
+      _bank == other._bank;
   }
   
   @override
@@ -134,12 +152,12 @@ class Users extends Model {
     buffer.write("Users {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("name=" + "$_name" + ", ");
-    buffer.write("bank=" + "$_bank" + ", ");
     buffer.write("isBusiness=" + (_isBusiness != null ? _isBusiness!.toString() : "null") + ", ");
-    buffer.write("country=" + "$_country" + ", ");
-    buffer.write("number=" + "$_number" + ", ");
     buffer.write("cac=" + "$_cac" + ", ");
     buffer.write("pics=" + (_pics != null ? _pics!.toString() : "null") + ", ");
+    buffer.write("number=" + "$_number" + ", ");
+    buffer.write("country=" + "$_country" + ", ");
+    buffer.write("bank=" + "$_bank" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -147,42 +165,42 @@ class Users extends Model {
     return buffer.toString();
   }
   
-  Users copyWith({String? id, String? name, String? bank, bool? isBusiness, String? country, String? number, String? cac, List<String>? pics}) {
+  Users copyWith({String? id, String? name, bool? isBusiness, String? cac, List<String>? pics, String? number, String? country, String? bank}) {
     return Users._internal(
       id: id ?? this.id,
       name: name ?? this.name,
-      bank: bank ?? this.bank,
       isBusiness: isBusiness ?? this.isBusiness,
-      country: country ?? this.country,
-      number: number ?? this.number,
       cac: cac ?? this.cac,
-      pics: pics ?? this.pics);
+      pics: pics ?? this.pics,
+      number: number ?? this.number,
+      country: country ?? this.country,
+      bank: bank ?? this.bank);
   }
   
   Users.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
       _name = json['name'],
-      _bank = json['bank'],
       _isBusiness = json['isBusiness'],
-      _country = json['country'],
-      _number = json['number'],
       _cac = json['cac'],
       _pics = json['pics']?.cast<String>(),
+      _number = json['number'],
+      _country = json['country'],
+      _bank = json['bank'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'bank': _bank, 'isBusiness': _isBusiness, 'country': _country, 'number': _number, 'cac': _cac, 'pics': _pics, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'isBusiness': _isBusiness, 'cac': _cac, 'pics': _pics, 'number': _number, 'country': _country, 'bank': _bank, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "users.id");
   static final QueryField NAME = QueryField(fieldName: "name");
-  static final QueryField BANK = QueryField(fieldName: "bank");
   static final QueryField ISBUSINESS = QueryField(fieldName: "isBusiness");
-  static final QueryField COUNTRY = QueryField(fieldName: "country");
-  static final QueryField NUMBER = QueryField(fieldName: "number");
   static final QueryField CAC = QueryField(fieldName: "cac");
   static final QueryField PICS = QueryField(fieldName: "pics");
+  static final QueryField NUMBER = QueryField(fieldName: "number");
+  static final QueryField COUNTRY = QueryField(fieldName: "country");
+  static final QueryField BANK = QueryField(fieldName: "bank");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Users";
     modelSchemaDefinition.pluralName = "Users";
@@ -202,32 +220,14 @@ class Users extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: Users.NAME,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Users.BANK,
-      isRequired: false,
+      isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: Users.ISBUSINESS,
-      isRequired: false,
+      isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.bool)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Users.COUNTRY,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Users.NUMBER,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
@@ -241,6 +241,24 @@ class Users extends Model {
       isRequired: true,
       isArray: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.collection, ofModelName: describeEnum(ModelFieldTypeEnum.string))
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Users.NUMBER,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Users.COUNTRY,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Users.BANK,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(

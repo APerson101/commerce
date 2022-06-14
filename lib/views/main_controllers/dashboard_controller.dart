@@ -6,7 +6,7 @@ import 'package:commerce/models/ModelProvider.dart';
 import 'package:riverpod/riverpod.dart';
 
 final imagesProvider = FutureProvider((ref) async {
-  return await Future.delayed(Duration(seconds: 1), () {
+  return await Future.delayed(const Duration(seconds: 0), () {
     List<Categories> allCategories = [];
     List<String> cats = <String>[];
     cats.addAll(

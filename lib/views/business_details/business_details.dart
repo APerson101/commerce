@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import '../../splashscreen.dart';
 import '../main_controllers/search_controller.dart';
 import '../reviews_page_view.dart';
 import 'buss_details_page.dart';
@@ -88,7 +89,7 @@ class BusinessDetailsView extends ConsumerWidget {
       );
     }, loading: () {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator.adaptive()),
+        body: Center(child: SplashScreen()),
       );
     });
   }

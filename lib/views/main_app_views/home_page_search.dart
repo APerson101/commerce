@@ -3,6 +3,7 @@ import 'package:commerce/views/main_controllers/dashboard_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../splashscreen.dart';
 import '../business_details/business_details.dart';
 
 class SearchDashboard extends StatelessWidget {
@@ -16,9 +17,7 @@ class SearchDashboard extends StatelessWidget {
         body: ObxValue((Rx<searchstatus> currentSearch) {
           switch (currentSearch.value) {
             case searchstatus.searching:
-              return const Center(
-                child: CircularProgressIndicator.adaptive(),
-              );
+              return SplashScreen();
             case searchstatus.done:
               return searchContent(
                 controller.searchResultBusinesses,

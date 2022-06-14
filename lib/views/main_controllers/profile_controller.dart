@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum editOptions { name, bank, email, number }
 
@@ -22,8 +23,19 @@ enum businessEditOptions {
   cac
 }
 
+final getuserProvider =
+    FutureProvider.family<Users, String>((userID, ref) async {
+  List<Users> all = await Amplify.DataStore.query(Users.classType,
+      where: Users.ID.eq(userID));
+  return all.first;
+});
 final profileProvider =
     FutureProvider.family<ProfileEditor, String>((ref, userId) async {
+  var userDetails = await Amplify.DataStore.query(Users.classType,
+      where: Users.ID.eq(userId));
+  var profilePicURL = userDetails[0].pics[0];
+
+  return ProfileEditor(url: profilePicURL, userDetails: userDetails[0]);
   return ProfileEditor(
       url:
           'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg',
@@ -38,13 +50,6 @@ final profileProvider =
           bank: "GTB",
           number: '08159730537',
           cac: '4423212'));
-  var userDetails = await Amplify.DataStore.query(Users.classType,
-      where: Users.ID.eq(userId));
-  var profilePicURL = userDetails[0].pics;
-
-  var userImageURL =
-      await FirebaseStorage.instance.ref('Users/$userId').getDownloadURL();
-  return ProfileEditor(url: userImageURL, userDetails: userDetails[0]);
 });
 
 final businessInfoProvider =
@@ -69,7 +74,37 @@ final businessInfoProvider =
   for (var i = 0; i < dyz.length; i++) {
     availability_.addAll({DaysWeek.values[dyz[i]]: tmz[i]});
   }
+
+  List<String> ee = [];
+  var userDetails = await Amplify.DataStore.query(Users.classType,
+      where: Users.ID.eq(userId));
+  var businessdetails = await Amplify.DataStore.query(Businesses.classType,
+      where: Businesses.ID.eq(userId));
+  String businessType = businessdetails[0].type!;
+  var userImageList =
+      await FirebaseStorage.instance.ref('Businesses/$businessType').listAll();
+  userImageList.items.forEach((element) async {
+    var data = await element.getMetadata();
+    var id = data.customMetadata!['userID'];
+    if (id == userId) {
+      ee.add(await element.getDownloadURL());
+    }
+  });
+  // Map<DaysWeek, String> availability_ = {};
+
+  for (var i = 0; i < businessdetails[0].AvailableDays!.length; i++) {
+    availability_.addAll({
+      DaysWeek.values[businessdetails[0].AvailableDays![i]]:
+          businessdetails[0].availableTimes![i]
+    });
+  }
   return ProfileEditor(
+      businessList: ee,
+      userDetails: userDetails[0],
+      availability: availability_,
+      business: businessdetails[0]);
+
+  /*return ProfileEditor(
     userDetails: Users(
       id: userId,
       name: 'Kehinde Shop',
@@ -89,28 +124,7 @@ final businessInfoProvider =
         cac: '44ffre',
         availableTimes: tmz,
         AvailableDays: dyz),
-  );
-  var userDetails = await Amplify.DataStore.query(Users.classType,
-      where: Users.ID.eq(userId));
-  var businessdetails = await Amplify.DataStore.query(Businesses.classType,
-      where: Businesses.ID.eq(userId));
-  String businessType = businessdetails[0].type!;
-  var userImageList = await FirebaseStorage.instance
-      .ref('Businesses/$businessType/$userId')
-      .listAll();
-  Map<String, String> availability = {};
-  for (var i = 0; i < businessdetails[0].AvailableDays!.length; i++) {
-    availability.addAll({
-      describeEnum(DaysWeek.values[businessdetails[0].AvailableDays![i]]):
-          businessdetails[0].availableTimes![i]
-    });
-  }
-  businessdetails[0].availableTimes;
-  // return ProfileEditor(
-  //     // businessList: userImageList,
-  //     userDetails: userDetails[0],
-  //     availability: availability,
-  //     business: businessdetails[0]);
+  );*/
 });
 
 class ProfileEditor {
@@ -160,7 +174,7 @@ class ProfileController extends GetxController {
       bank: isEditingbank.value ? newBank.value : null,
       number: isEditingNumber.value ? newNumber.value : null,
     );
-    if (data.userDetails.isBusiness!) {
+    if (data.userDetails.isBusiness) {
       Businesses currentBusiness = data.business!;
       Businesses updated = currentBusiness.copyWith(
         about: isEditingAbout.value ? newAbout.value : null,
@@ -177,8 +191,12 @@ class ProfileController extends GetxController {
         var references = await FirebaseStorage.instance
             .ref('Businesses/${data.business!.type!}')
             .listAll();
-        references.items.forEach((element) {
-          element.delete();
+        references.items.forEach((element) async {
+          var metadata = await element.getMetadata();
+          var userID = metadata.customMetadata!['userID'];
+          if (userID == data.userDetails.id) {
+            element.delete();
+          }
         });
 
         newImages.forEach((element) async {
@@ -189,7 +207,7 @@ class ProfileController extends GetxController {
                   await element.readAsBytes(),
                   SettableMetadata(
                       contentType: 'images/png',
-                      customMetadata: {'userID': '4421'}));
+                      customMetadata: {'userID': '${data.userDetails.id}'}));
         });
       }
     }

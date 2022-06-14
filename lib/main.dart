@@ -5,6 +5,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:commerce/constants.dart';
 import 'package:commerce/controllers/signupcontroller.dart';
 import 'package:commerce/views/main_app_views/bookings_view.dart';
 import 'package:commerce/views/main_app_views/dashboard_view.dart';
@@ -16,10 +17,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'amplifyconfiguration.dart';
 import 'controllers/main_controller.dart';
 import 'firebase_options.dart';
 import 'models/ModelProvider.dart';
+import 'splashscreen.dart';
 import 'views/home.dart';
 import 'views/sign_up_contd_view.dart';
 import 'views/signinview.dart';
@@ -36,7 +39,7 @@ void main() async {
     await Amplify.addPlugin(
         AmplifyDataStore(modelProvider: ModelProvider.instance));
     await Amplify.addPlugin(AmplifyAuthCognito());
-
+    // Amplify.DataStore.clear();
     await Amplify.addPlugin(AmplifyAPI());
     await Amplify.configure(amplifyconfig);
     try {
@@ -49,7 +52,8 @@ void main() async {
   }
 
   await initApp();
-  runApp(ProviderScope(child: GetMaterialApp(home: DashboardView())));
+  runApp(ProviderScope(child: MyApp()));
+  // runApp(ProviderScope(child: GetMaterialApp(home: MyApp())));
 }
 
 class MyApp extends ConsumerWidget {
@@ -63,15 +67,20 @@ class MyApp extends ConsumerWidget {
             case AuthenticatorStep.signIn:
               return SignInView(authenticatorState: state);
             case AuthenticatorStep.loading:
-              return const Scaffold(
-                  body: Center(child: CircularProgressIndicator.adaptive()));
+              return const Scaffold(body: Center(child: SplashScreen()));
             case AuthenticatorStep.signUp:
               return SignupFirstView(authenticatorState: state);
             default:
               return null;
           }
         },
-        child: const MainLoader());
+        child: GetMaterialApp(
+            theme: ThemeData.from(
+              colorScheme: ColorScheme.fromSwatch(
+                  primarySwatch: Colors.red, accentColor: Colors.redAccent),
+            ),
+            builder: Authenticator.builder(),
+            home: const MainLoader()));
   }
 }
 
@@ -84,7 +93,7 @@ class MainLoader extends ConsumerWidget {
     return newUser.when(
         data: (status) {
           if (status.isNotEmpty) {
-            print("user is new");
+            print("user is not new");
             if (status['authUser'] != null) {
               print("user is authenitcated");
 
@@ -102,6 +111,7 @@ class MainLoader extends ConsumerWidget {
                 return MainP();
               } else {
                 print("HERE 1");
+                print((status['authUser'] as AuthUser).userId);
                 return SignUpContdView(
                     userId: (status['authUser'] as AuthUser).userId);
               }
@@ -113,14 +123,14 @@ class MainLoader extends ConsumerWidget {
           } else {
             return const Scaffold(
                 body: Center(
-              child: CircularProgressIndicator.adaptive(),
+              child: SplashScreen(),
             ));
           }
         },
         loading: () {
           return const Scaffold(
               body: Center(
-            child: CircularProgressIndicator.adaptive(),
+            child: SplashScreen(),
           ));
         },
         error: (error, lo) => const Scaffold(
@@ -206,9 +216,13 @@ class MainP extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: customLightTheme,
-      darkTheme: customDarkTheme,
-      themeMode: ThemeMode.system,
+      theme: ThemeData.from(
+        colorScheme: ColorScheme.fromSwatch(
+            primarySwatch: Colors.red, accentColor: Colors.redAccent),
+      ),
+      // darkTheme: customDarkTheme,
+      // themeMode: ThemeMode.system,
+
       builder: Authenticator.builder(),
       title: 'E Commerce',
       home: Scaffold(body: HomePage()),
@@ -216,8 +230,8 @@ class MainP extends StatelessWidget {
   }
 }
 
-class ImagSender extends StatelessWidget {
-  ImagSender({Key? key}) : super(key: key);
+class ImageSender extends StatelessWidget {
+  ImageSender({Key? key}) : super(key: key);
   List<Uint8List> files = [];
   @override
   Widget build(BuildContext context) {

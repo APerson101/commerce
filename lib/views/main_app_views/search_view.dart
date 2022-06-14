@@ -3,6 +3,7 @@ import 'package:commerce/views/main_controllers/search_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../splashscreen.dart';
 import '../business_details/business_details.dart';
 
 class SearchView extends StatelessWidget {
@@ -18,7 +19,7 @@ class SearchView extends StatelessWidget {
         ObxValue((Rx<CurrentSearchState> state) {
           switch (state.value) {
             case CurrentSearchState.searching:
-              return const Center(child: CircularProgressIndicator.adaptive());
+              return const SplashScreen();
             case CurrentSearchState.done:
               var values = controller.searchResult.value;
               if (values.businesses.isNotEmpty) {
@@ -194,7 +195,7 @@ class SearchView extends StatelessWidget {
     return ObxValue((Rx<CurrentSearchState> state) {
       switch (state.value) {
         case CurrentSearchState.searching:
-          return const Center(child: CircularProgressIndicator.adaptive());
+          return const SplashScreen();
         case CurrentSearchState.none:
           return const Center(child: Text("No Such result"));
         case CurrentSearchState.error:

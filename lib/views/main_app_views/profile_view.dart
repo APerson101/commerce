@@ -1,6 +1,7 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:commerce/controllers/main_controller.dart';
+import 'package:commerce/models/Users.dart';
 import 'package:commerce/views/home.dart';
 import 'package:commerce/views/main_controllers/profile_controller.dart';
 import 'package:commerce/views/sign_up_contd_view.dart';
@@ -13,41 +14,53 @@ import 'package:image_picker/image_picker.dart';
 import 'package:time_range_picker/time_range_picker.dart';
 
 import '../../controllers/home_controller.dart';
+import '../../splashscreen.dart';
 
 class ProfileView extends ConsumerWidget {
   ProfileView({Key? key}) : super(key: key);
   ProfileController controller = Get.put(ProfileController());
-  // MainController _mainController = Get.find();
+  MainController _mainController = Get.find();
   bool thihngs = true;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<ProfileEditor> profile;
+    AsyncValue<ProfileEditor> profile;
     // if (_mainController.isUserBusiness) {
     //   profile = ref.watch(businessInfoProvider(_mainController.user.userId));
     // } else {
     //   profile = ref.watch(profileProvider('dfd'));
     // }
-
-    if (thihngs) {
-      profile = ref.watch(businessInfoProvider('4421'));
-    } else {
-      profile = ref.watch(profileProvider('4421'));
-    }
-    return profile.when(data: (ProfileEditor data) {
-      return Scaffold(
-        appBar: AppBar(title: const Text("Edit Profile")),
-        body: SingleChildScrollView(
-          child: Column(
-            children: !thihngs
-                ? _contentDecider(context, data)
-                : _busineessProfile(context, data),
+    return ref.watch(getuserProvider(_mainController.user.userId)).when(
+        data: (value) {
+      if (value.isBusiness) {
+        profile = ref.watch(businessInfoProvider(_mainController.user.userId));
+      } else {
+        profile = ref.watch(profileProvider(_mainController.user.userId));
+      }
+      return profile.when(data: (ProfileEditor data) {
+        return Scaffold(
+          appBar: AppBar(title: const Text("Edit Profile")),
+          body: SingleChildScrollView(
+            child: Column(
+              children: !thihngs
+                  ? _contentDecider(context, data)
+                  : _busineessProfile(context, data),
+            ),
           ),
-        ),
-      );
+        );
+      }, loading: () {
+        return Scaffold(
+          appBar: AppBar(),
+          body: SplashScreen(),
+        );
+      }, error: (Object error, StackTrace? stackTrace) {
+        return const Scaffold(
+          body: Center(child: Text("Error")),
+        );
+      });
     }, loading: () {
       return Scaffold(
         appBar: AppBar(),
-        body: const CircularProgressIndicator.adaptive(),
+        body: const SplashScreen(),
       );
     }, error: (Object error, StackTrace? stackTrace) {
       return const Scaffold(
@@ -392,7 +405,7 @@ class ProfileView extends ConsumerWidget {
               );
             } else {
               return ListTile(
-                  title: Text('_mainController.user.username'),
+                  title: Text(_mainController.user.username),
                   trailing: TextButton(
                       onPressed: () => controller.isEditingEmail.value = true,
                       child: const Text('edit')));

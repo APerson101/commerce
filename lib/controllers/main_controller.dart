@@ -29,6 +29,7 @@ enum LoginStates { loggedOut, newUser, loggedIn, loading }
 
 final FutureProvider<Map<String, dynamic>> newUserProvider =
     FutureProvider((ref) async {
+  print("Checking her again");
   bool newuser = false;
   List<Users> users = [];
   AuthUser? authenticatedUser;

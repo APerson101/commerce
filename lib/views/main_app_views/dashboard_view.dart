@@ -8,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
+import '../../splashscreen.dart';
+
 class DashboardView extends ConsumerWidget {
   DashboardView({Key? key}) : super(key: key);
   DashBoardController controller = Get.put(DashBoardController());
@@ -92,9 +94,9 @@ class DashboardView extends ConsumerWidget {
                                       child: Center(
                                           child: Text(category.category,
                                               style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 20,
-                                                  color: Colors.white))),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                              ))),
                                     ),
                                   )
                                 ],
@@ -113,7 +115,7 @@ class DashboardView extends ConsumerWidget {
   }
 
   Widget loading() => const Scaffold(
-        body: Center(child: CircularProgressIndicator.adaptive()),
+        body: SplashScreen(),
       );
 
   Widget error(Object error, StackTrace? stackTrace) =>
@@ -138,7 +140,7 @@ class DashboardView extends ConsumerWidget {
               },
             ),
             title: Image.asset(
-              'images/logo.jpeg',
+              'assets/images/logo.jpeg',
               width: 70,
               height: 50,
             ),
@@ -234,6 +236,7 @@ class DashboardView extends ConsumerWidget {
                             controller.searchText.value = searchText,
                         decoration: InputDecoration(
                           hintText: "Search for places...",
+                          hintStyle: const TextStyle(color: Colors.grey),
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
@@ -298,7 +301,6 @@ class DashboardView extends ConsumerWidget {
             return Padding(
               padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Card(
-                color: const Color.fromARGB(255, 63, 63, 63),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 child: SizedBox(
@@ -319,7 +321,7 @@ class DashboardView extends ConsumerWidget {
                           right: 0,
                           child: DecoratedBox(
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Colors.grey,
                                 shape: BoxShape.circle,
                               ),
                               child: Padding(
@@ -339,9 +341,9 @@ class DashboardView extends ConsumerWidget {
                           child: Center(
                               child: Text(category.category,
                                   style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: Colors.white))),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ))),
                         ),
                       ),
                     ],
@@ -360,7 +362,7 @@ class DashboardView extends ConsumerWidget {
               // Image 1,
               Container(
                 height: MediaQuery.of(context).size.height * .3,
-                width: MediaQuery.of(context).size.width * .18,
+                width: MediaQuery.of(context).size.width * .27,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     fit: BoxFit.fill,
@@ -375,7 +377,7 @@ class DashboardView extends ConsumerWidget {
                   // image 2 and 3
                   ...category.imageLinks.sublist(1, 3).map((e) => Container(
                         height: MediaQuery.of(context).size.height * .15,
-                        width: MediaQuery.of(context).size.width * .12,
+                        width: MediaQuery.of(context).size.width * .18,
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             fit: BoxFit.fill,
@@ -396,13 +398,18 @@ class DashboardView extends ConsumerWidget {
                     padding: const EdgeInsets.all(1.0),
                     child: FittedBox(
                         child: Image.network(category.imageLinks[0]!,
-                            width: MediaQuery.of(context).size.width * 0.3,
+                            width: MediaQuery.of(context).size.width * 0.45,
                             height: MediaQuery.of(context).size.height * 0.3,
                             fit: BoxFit.fill)),
                   )
                 : SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.3,
+                    width: MediaQuery.of(context).size.width * 0.45,
                     height: MediaQuery.of(context).size.height * 0.3,
+                    child: const Center(
+                        child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text("no businesss yet in this category"),
+                    )),
                   );
   }
 
@@ -410,7 +417,7 @@ class DashboardView extends ConsumerWidget {
     return Column(children: [
       ...imagesURL
           .map((src) => Container(
-                height: MediaQuery.of(context).size.height * .15,
+                height: MediaQuery.of(context).size.height * .225,
                 width: MediaQuery.of(context).size.width * .3,
                 decoration: BoxDecoration(
                   image: DecorationImage(

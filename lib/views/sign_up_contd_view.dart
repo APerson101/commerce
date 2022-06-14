@@ -1,64 +1,74 @@
 import 'dart:io';
 import 'package:awesome_select/awesome_select.dart';
-import 'package:commerce/controllers/signincontroller.dart';
+import 'package:commerce/splashscreen.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:time_range_picker/time_range_picker.dart';
 import '../controllers/signupcontroller.dart';
-// import '../main.dart';
+
+final isBusinsessProvider = FutureProvider((ref) async {
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  return pref.getBool('isBusiness') ?? false;
+});
 
 class SignUpContdView extends ConsumerWidget {
   SignUpContdView({Key? key, required this.userId}) : super(key: key);
   final String userId;
   final SignUpController controller = Get.put(SignUpController());
-  final SignInController controller_ = Get.put(SignInController());
-  // final SignInController controller_ = Get.find();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ObxValue((Rx<signUpStates> current) {
-      switch (current.value) {
-        case signUpStates.loading:
-          return const Scaffold(
-              body: Center(child: CircularProgressIndicator.adaptive()));
-        case signUpStates.failure:
-          return const Scaffold(
-            body: Center(child: Text("Unknown Error")),
-          );
-        case signUpStates.success:
-          return Scaffold(
-              body: Center(
-                  child: SafeArea(
-            child: Column(children: [
-              const Spacer(),
-              const Text("Sign Up successful"),
-              ElevatedButton(
-                  onPressed: () {
-                    ref.read(signupProvider.notifier).state = true;
-                  },
-                  child: const Text("Continue")),
-              const Spacer(),
-            ]),
-          )));
-        case signUpStates.idle:
-          return signUpSheet(context);
-        default:
-          return Container();
-      }
-    }, controller.currentState);
+    return ref.watch(isBusinsessProvider).when(data: (bool data) {
+      return ObxValue((Rx<signUpStates> current) {
+        switch (current.value) {
+          case signUpStates.loading:
+            return const Scaffold(body: Center(child: SplashScreen()));
+          case signUpStates.failure:
+            return const Scaffold(
+              body: Center(child: Text("Unknown Error")),
+            );
+          case signUpStates.success:
+            return Scaffold(
+                body: Center(
+                    child: SafeArea(
+              child: Column(children: [
+                const Spacer(),
+                const Text("Sign Up successful"),
+                ElevatedButton(
+                    onPressed: () {
+                      ref.read(signupProvider.notifier).state = true;
+                    },
+                    child: const Text("Continue")),
+                const Spacer(),
+              ]),
+            )));
+          case signUpStates.idle:
+            return signUpSheet(context, data);
+          default:
+            return Container();
+        }
+      }, controller.currentState);
+    }, error: (Object error, StackTrace? stackTrace) {
+      return const Scaffold(body: Center(child: Text("ERROR")));
+    }, loading: () {
+      return const Scaffold(body: SplashScreen());
+    });
   }
 
-  Scaffold signUpSheet(BuildContext context) {
-    controller_.asServiceProvider.value
+  Scaffold signUpSheet(BuildContext context, bool isbusiness) {
+    isbusiness
         ? controller.name.value = "Business Name"
         : controller.name.value = "Full Name";
 
     return Scaffold(
         appBar: AppBar(
-          title: Image.asset('images/logo.jpeg'),
+          title: Center(
+              child: Image.asset('assets/images/logo.jpeg',
+                  height: 100, width: 100)),
         ),
         body: Padding(
             padding:
@@ -123,36 +133,34 @@ class SignUpContdView extends ConsumerWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 18.0, bottom: 8.0),
-                    child: Obx(() => controller_.asServiceProvider.value
+                    child: isbusiness
                         // ? teste(context)
                         ? availability(context)
-                        : Container()),
+                        : Container(),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
-                    child: images(context),
+                    child: images(context, isbusiness),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
-                    child: Obx(() => controller_.asServiceProvider.value
-                        ? locationAbout(context)
-                        : Container()),
+                    child: isbusiness ? locationAbout(context) : Container(),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
-                    child: signUpButton(context),
+                    child: signUpButton(context, isbusiness),
                   )
                 ]))));
   }
 
-  Widget signUpButton(BuildContext context) {
+  Widget signUpButton(BuildContext context, bool isbusiness) {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
             minimumSize: Size(MediaQuery.of(context).size.width * 0.75, 60),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20))),
         onPressed: () async {
-          await controller.signUp(userId);
+          await controller.signUp(userId, isbusiness);
         },
         child: const Text("Create Account"));
   }
@@ -218,18 +226,11 @@ class SignUpContdView extends ConsumerWidget {
               title: "Days of the week",
               choiceItems: days_of_the_week,
             ),
-            ButtonBar(
-              children: [
-                Spacer(),
-                ElevatedButton(onPressed: () {}, child: const Text("Cancel")),
-                ElevatedButton(
-                    onPressed: () {
-                      controller.showHrs.value = true;
-                    },
-                    child: const Text("Continue")),
-                Spacer()
-              ],
-            )
+            ElevatedButton(
+                onPressed: () {
+                  controller.showHrs.value = true;
+                },
+                child: const Text("Continue to Time")),
           ]))
         : dayTimePicker(context));
   }
@@ -265,7 +266,7 @@ class SignUpContdView extends ConsumerWidget {
                       icon: const Icon(Icons.add)),
                 )
               : ListTile(
-                  title: Text(controller.dayTimeMapping2[day].toString()),
+                  title: getIt(day),
                   trailing: IconButton(
                       onPressed: () {
                         controller.dayTimeMapping2.remove(day);
@@ -278,12 +279,25 @@ class SignUpContdView extends ConsumerWidget {
         );
   }
 
-  Widget images(BuildContext context) {
+  Widget getIt(day) {
+    int starthr = controller.dayTimeMapping2[day]!.startTime.hour;
+    String starthrString =
+        starthr < 10 && starthr > 0 ? '0$starthr' : starthr.toString();
+    int endhr = controller.dayTimeMapping2[day]!.endTime.hour;
+    String endhrString = endhr < 10 && endhr < 0 ? '0$endhr' : endhr.toString();
+
+    int startMin = controller.dayTimeMapping2[day]!.startTime.minute;
+    String startMinStirng = startMin != 30 ? '00' : startMin.toString();
+    int endmin = controller.dayTimeMapping2[day]!.endTime.minute;
+    String endMinStirng = endmin != 30 ? '00' : endmin.toString();
+    return Text(
+        '$starthrString : $startMinStirng - $endhrString : $endMinStirng');
+  }
+
+  Widget images(BuildContext context, bool isbusiness) {
     return Obx(() {
       if (controller.selectedImageFiles.isEmpty) {
-        String text = controller_.asServiceProvider.value
-            ? 'Select Images'
-            : 'Select Profile Pic';
+        String text = isbusiness ? 'Select Images' : 'Select Profile Pic';
         return ElevatedButton(
             style: ElevatedButton.styleFrom(
                 minimumSize: Size(MediaQuery.of(context).size.width * 0.75, 60),
@@ -291,7 +305,7 @@ class SignUpContdView extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(20))),
             onPressed: () async {
               final ImagePicker _picker = ImagePicker();
-              final List<XFile>? images = controller_.asServiceProvider.value
+              final List<XFile>? images = isbusiness
                   ? await _picker.pickMultiImage()
                   : List<XFile>.from(
                       [await _picker.pickImage(source: ImageSource.gallery)]);

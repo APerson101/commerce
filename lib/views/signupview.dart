@@ -22,7 +22,7 @@ class SignUpView extends StatelessWidget {
                     children: [
                   Obx(() => CheckboxListTile(
                       title: const Text("As service Provider"),
-                      contentPadding: EdgeInsets.all(30),
+                      contentPadding: const EdgeInsets.all(30),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: controller.asServiceProvider.value,
                       onChanged: (newValue) {

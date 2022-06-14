@@ -7,7 +7,7 @@ class SignInController extends GetxController {
 
   RxString password = ''.obs;
 
-  RxBool asServiceProvider = true.obs;
+  RxBool asServiceProvider = false.obs;
 
   Rx<signInStates> loadingstates = signInStates.idle.obs;
 
