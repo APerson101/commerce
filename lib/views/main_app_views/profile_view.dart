@@ -38,12 +38,12 @@ class ProfileView extends ConsumerWidget {
       }
       return profile.when(data: (ProfileEditor data) {
         return Scaffold(
-          appBar: AppBar(title: const Text("Edit Profile")),
+          appBar: AppBar(title: const Text("Your Profile")),
           body: SingleChildScrollView(
             child: Column(
-              children: !thihngs
-                  ? _contentDecider(context, data)
-                  : _busineessProfile(context, data),
+              children: value.isBusiness
+                  ? _busineessProfile(context, data)
+                  : _contentDecider(context, data),
             ),
           ),
         );
@@ -63,6 +63,7 @@ class ProfileView extends ConsumerWidget {
         body: const SplashScreen(),
       );
     }, error: (Object error, StackTrace? stackTrace) {
+      print(error.toString());
       return const Scaffold(
         body: Center(child: Text("Error")),
       );
@@ -76,18 +77,17 @@ class ProfileView extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50)),
-                child: Image.network(
+            child: CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(
                   data.url!,
                   // loadingBuilder: ((context, child, loadingProgress) =>
                   //     CircularProgressIndicator.adaptive()),
                 )),
           ),
           Positioned(
-              bottom: 0,
-              right: 0,
+              bottom: -15,
+              right: -10,
               child: TextButton(
                   onPressed: () async {
                     final ImagePicker _picker = ImagePicker();
@@ -157,7 +157,7 @@ class ProfileView extends ConsumerWidget {
                 padding: const EdgeInsets.all(10.0),
                 child: Card(
                   child: ListTile(
-                      title: Text(data.userDetails.bank!),
+                      title: Text(data.userDetails.bank ?? "null"),
                       trailing: TextButton(
                           onPressed: () =>
                               controller.isEditingbank.value = true,

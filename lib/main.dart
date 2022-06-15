@@ -75,10 +75,11 @@ class MyApp extends ConsumerWidget {
           }
         },
         child: GetMaterialApp(
-            theme: ThemeData.from(
-              colorScheme: ColorScheme.fromSwatch(
-                  primarySwatch: Colors.red, accentColor: Colors.redAccent),
-            ),
+            theme: ThemeData(
+                colorScheme: ColorScheme.light(primary: Colors.red.shade800)),
+            // theme: ThemeData.from(
+            //   colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue),
+            // ),
             builder: Authenticator.builder(),
             home: const MainLoader()));
   }
@@ -217,8 +218,7 @@ class MainP extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.from(
-        colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: Colors.red, accentColor: Colors.redAccent),
+        colorScheme: ColorScheme.light(primary: Colors.red.shade800),
       ),
       // darkTheme: customDarkTheme,
       // themeMode: ThemeMode.system,

@@ -14,7 +14,7 @@ class SignupFirstView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.red,
+          // backgroundColor: Colors.red.sh,
           leading: IconButton(
               onPressed: () =>
                   authenticatorState.changeStep(AuthenticatorStep.signIn),

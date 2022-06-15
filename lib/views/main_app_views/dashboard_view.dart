@@ -326,7 +326,7 @@ class DashboardView extends ConsumerWidget {
                               ),
                               child: Padding(
                                 padding: EdgeInsets.only(
-                                    left: 65.0,
+                                    left: 75.0,
                                     right: 25.0,
                                     top: 25.0,
                                     bottom: 25.0),
@@ -417,10 +417,11 @@ class DashboardView extends ConsumerWidget {
     return Column(children: [
       ...imagesURL
           .map((src) => Container(
-                height: MediaQuery.of(context).size.height * .225,
-                width: MediaQuery.of(context).size.width * .3,
+                height: MediaQuery.of(context).size.height * .18,
+                width: MediaQuery.of(context).size.width * .45,
                 decoration: BoxDecoration(
                   image: DecorationImage(
+                    scale: 0.3,
                     fit: BoxFit.fill,
                     image: NetworkImage(src!),
                   ),

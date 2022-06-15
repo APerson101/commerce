@@ -35,7 +35,7 @@ class SignInView extends StatelessWidget {
                   subtitle: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("To continue using",
+                        const Text("To continue using   ",
                             style: TextStyle(
                               fontSize: 22,
                             )),
@@ -49,15 +49,9 @@ class SignInView extends StatelessWidget {
                     SignInFormField.password(),
                   ],
                 ),
-                // ElevatedButton(
-                //     onPressed: () {
-                //       authenticatorState.changeStep(AuthenticatorStep.signIn);
-                //     },
-                //     child: const Text('Sign In')),
                 const SizedBox(
                   height: 20,
                 ),
-
                 Obx(() => CheckboxListTile(
                     title: const Text("As a service provider"),
                     controlAffinity: ListTileControlAffinity.leading,
@@ -73,12 +67,10 @@ class SignInView extends StatelessWidget {
                 const SizedBox(
                   height: 25,
                 ),
-
                 const Text('New user?'),
                 const SizedBox(
                   height: 15,
                 ),
-
                 const SizedBox(
                   height: 25,
                 ),
@@ -87,85 +79,12 @@ class SignInView extends StatelessWidget {
                       authenticatorState.changeStep(AuthenticatorStep.signUp);
                     },
                     style: ElevatedButton.styleFrom(
-                        primary: Colors.red,
                         minimumSize:
                             Size(MediaQuery.of(context).size.width * 0.8, 45)),
                     child: const Text('Create Account')),
-                // Row(
-                //   children: const [
-                //     Expanded(child: Divider()),
-                //     Text("or"),
-                //     Expanded(child: Divider()),
-                //   ],
-                // ),
-                // SocialLoginButton(
-                //   buttonType: SocialLoginButtonType.google,
-                //   onPressed: () async {
-                //     var res = await Amplify.Auth.signInWithWebUI(
-                //         provider: AuthProvider.facebook);
-                //   },
-                // ),
               ]),
         ),
       ),
     );
   }
 }
-
-/**
- *  SizedBox(
-          width: MediaQuery.of(context).size.width * .8,
-          child: TextField(
-            onChanged: (enteredEmail) => controller.email.value = enteredEmail,
-            decoration: InputDecoration(
-                hintText: "Email",
-                prefixIcon: const Icon(Icons.email),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20))),
-          ),
-        ),
-        SizedBox(
-          width: MediaQuery.of(context).size.width * .8,
-          child: Obx(
-            () => TextField(
-                obscureText: controller.passwordview.value,
-                onChanged: (enteredpassword) =>
-                    controller.password.value = enteredpassword,
-                decoration: InputDecoration(
-                    hintText: "Password",
-                    suffixIcon: IconButton(
-                        onPressed: () => controller.togglePasswordView(),
-                        icon: const Icon(Icons.remove_red_eye_rounded)),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20)))),
-          ),
-        ),
-        
-        ElevatedButton(onPressed: () async {
-          controller.signIn();
-          Future.delayed(Duration(seconds: 1), () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => HomePage()));
-          });
-        }, child: Obx(() {
-          if (controller.loadingstates.value == signInStates.loading) {
-            return const CircularProgressIndicator.adaptive();
-          } else {
-            return const Text("SIGN IN ");
-          }
-        })),
-        const Text('New user?'),
-        ElevatedButton(
-            onPressed: () => Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => SignUpView())),
-            child: Text("Create Account")),
-        Row(
-          children: [
-            Expanded(child: Divider()),
-            Text("or"),
-            Expanded(child: Divider()),
-          ],
-        ),
-        ElevatedButton(onPressed: () {}, child: Text("SIGN IN WITH APPLE")),
-        ElevatedButton(onPressed: () {}, child: Text("SIGN IN WITH GOOGLE")),
- */

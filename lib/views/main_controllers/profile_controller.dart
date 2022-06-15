@@ -24,9 +24,11 @@ enum businessEditOptions {
 }
 
 final getuserProvider =
-    FutureProvider.family<Users, String>((userID, ref) async {
+    FutureProvider.family<Users, String>((ref, userID) async {
+  print("Finding user with id: $userID");
   List<Users> all = await Amplify.DataStore.query(Users.classType,
       where: Users.ID.eq(userID));
+  print("Here is what i found out: ${all.first}");
   return all.first;
 });
 final profileProvider =
@@ -54,27 +56,7 @@ final profileProvider =
 
 final businessInfoProvider =
     FutureProvider.family<ProfileEditor, String>((ref, userId) async {
-  var userImageList_ =
-      await FirebaseStorage.instance.ref('Businesses/Hair Salon').listAll();
-  List<String> specified = [];
-  userImageList_.items.forEach((element) async {
-    var metadata = await element.getMetadata();
-    var userID = metadata.customMetadata!['userID'];
-    if (userID == userId) {
-      specified.add(await element.getDownloadURL());
-    }
-  });
   Map<DaysWeek, String> availability_ = {};
-  List<int> dyz = [0, 1, 2];
-  List<String> tmz = [
-    '08:00am - 16:00pm',
-    '09:00am - 12:00 noon',
-    '10:00am - 17:00pm',
-  ];
-  for (var i = 0; i < dyz.length; i++) {
-    availability_.addAll({DaysWeek.values[dyz[i]]: tmz[i]});
-  }
-
   List<String> ee = [];
   var userDetails = await Amplify.DataStore.query(Users.classType,
       where: Users.ID.eq(userId));
@@ -103,7 +85,25 @@ final businessInfoProvider =
       userDetails: userDetails[0],
       availability: availability_,
       business: businessdetails[0]);
-
+  var userImageList_ =
+      await FirebaseStorage.instance.ref('Businesses/Hair Salon').listAll();
+  List<String> specified = [];
+  userImageList_.items.forEach((element) async {
+    var metadata = await element.getMetadata();
+    var userID = metadata.customMetadata!['userID'];
+    if (userID == userId) {
+      specified.add(await element.getDownloadURL());
+    }
+  });
+  List<int> dyz = [0, 1, 2];
+  List<String> tmz = [
+    '08:00am - 16:00pm',
+    '09:00am - 12:00 noon',
+    '10:00am - 17:00pm',
+  ];
+  for (var i = 0; i < dyz.length; i++) {
+    availability_.addAll({DaysWeek.values[dyz[i]]: tmz[i]});
+  }
   /*return ProfileEditor(
     userDetails: Users(
       id: userId,

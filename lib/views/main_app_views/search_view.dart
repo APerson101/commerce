@@ -29,14 +29,24 @@ class SearchView extends StatelessWidget {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        children: const [Text("No search Result")]));
+                        children: const [
+                      SizedBox(
+                        height: 200,
+                      ),
+                      Center(child: Text("No search Result"))
+                    ]));
               }
             case CurrentSearchState.idle:
               return SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [Text("Search for Anything")],
+                  children: const [
+                    SizedBox(
+                      height: 200,
+                    ),
+                    Center(child: Text("Search for Anything")),
+                  ],
                 ),
               );
 
@@ -83,7 +93,7 @@ class SearchView extends StatelessWidget {
     List<DropdownMenuItem<int>> menuitmes = [];
     menuitmes.add(
       const DropdownMenuItem(
-        child: Text('Enter Time'),
+        child: Text('Time'),
         value: 300,
       ),
     );
@@ -94,7 +104,7 @@ class SearchView extends StatelessWidget {
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.25,
-      color: Colors.redAccent,
+      color: Colors.red.shade800,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListTile(
@@ -140,7 +150,7 @@ class SearchView extends StatelessWidget {
                     child: Obx(() {
                       int? vl = controller.searchperiod.value;
                       return DropdownButton<int>(
-                          hint: const Text("Enter time"),
+                          hint: const Text("Time"),
                           value: vl,
                           items: menuitmes,
                           onChanged: (selectednumber) =>
@@ -153,11 +163,14 @@ class SearchView extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    OutlinedButton(
-                        onPressed: () {
-                          controller.filter.value = Searchfilters.all;
-                        },
-                        child: Text('All')),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: OutlinedButton(
+                          onPressed: () {
+                            controller.filter.value = Searchfilters.all;
+                          },
+                          child: Text('All')),
+                    ),
                     OutlinedButton(
                         onPressed: () {
                           controller.filter.value = Searchfilters.barber;

@@ -66,6 +66,7 @@ class SignUpContdView extends ConsumerWidget {
 
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.white,
           title: Center(
               child: Image.asset('assets/images/logo.jpeg',
                   height: 100, width: 100)),
