@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-enum views { dashboard, bookings, profile, search }
+enum views { dashboard, bookings, search, profile }
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -39,6 +39,7 @@ class HomePage extends StatelessWidget {
     return Obx(() {
       int currentIndx = views.values.indexOf(controller.currentView.value);
       return BottomNavigationBar(
+          unselectedItemColor: Colors.redAccent,
           selectedItemColor: Colors.teal,
           onTap: (tappedIndex) => controller.currentView.value =
               views.values.elementAt(tappedIndex),
