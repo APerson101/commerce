@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:commerce/views/main_app_views/home_page_search.dart';
 import 'package:commerce/views/main_controllers/dashboard_controller.dart';
@@ -58,12 +56,14 @@ class DashboardView extends ConsumerWidget {
                               height: 325,
                               child: Stack(
                                 children: [
-                                  const SizedBox(
+                                  SizedBox(
                                       // child: Positioned(
                                       //     top: 0,
                                       //     left: 0,
                                       //     right: 0,
-                                      child: FlutterLogo(size: 200)
+                                      child: Image.asset(
+                                    'assets/images/logo/jpeg',
+                                  )
                                       // )
                                       ),
                                   const Positioned(
